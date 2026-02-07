@@ -1,0 +1,19 @@
+{
+  "name": "doesangue",
+  "private": true,
+  "description": "Monorepo DoeSangue",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w doevida",
+    "build": "npm run build -w doevida",
+    "preview": "npm run preview -w doevida",
+    "web:dev": "npm run dev -w doevida",
+    "web:build": "npm run build -w doevida",
+    "web:preview": "npm run preview -w doevida"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
