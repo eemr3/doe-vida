@@ -1,0 +1,46 @@
+# Portas não padrão para evitar conflito com Postgres/Redis já rodando na máquina (5432 e 6379).
+# Postgres: 5433 | Redis: 6380
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: doesangue-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-toch}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-supersecretpassword}
+      POSTGRES_DB: ${POSTGRES_DB:-doevida-db}
+    ports:
+      - '5433:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${POSTGRES_USER:-toch} -d ${POSTGRES_DB:-doevida-db}',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: doesangue-redis
+    restart: unless-stopped
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis-dev-secret}
+    command: sh -c 'redis-server --requirepass "$$REDIS_PASSWORD"'
+    ports:
+      - '6380:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'sh', '-c', 'redis-cli -a "$$REDIS_PASSWORD" ping']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:

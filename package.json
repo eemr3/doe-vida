@@ -11,7 +11,8 @@
     "preview": "npm run preview -w doevida",
     "web:dev": "npm run dev -w doevida",
     "web:build": "npm run build -w doevida",
-    "web:preview": "npm run preview -w doevida"
+    "web:preview": "npm run preview -w doevida",
+    "api:dev": "dotnet run --project apps/api/src/DoeVida.Api/DoeVida.Api.csproj"
   },
   "engines": {
     "node": ">=18"
