@@ -9,4 +9,6 @@ public interface IUserService
   Task<RegisterUserResponse> CreateAsync(RegisterUserCommand command, CancellationToken ct);
 
   Task<PagedResult<GetUsersResponse>> GetAllAsync(GetUsersQuery query, CancellationToken ct);
+
+  Task SetActiveAsync(Guid id, bool isActive, CancellationToken ct);
 }

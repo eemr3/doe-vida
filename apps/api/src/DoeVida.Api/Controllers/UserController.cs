@@ -1,5 +1,6 @@
 using DoeVida.Application.UseCases.GetUsers;
 using DoeVida.Application.UseCases.RegisterUser;
+using DoeVida.Application.UseCases.SetUserActive;
 using DoeVida.Application.UseCases.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +15,15 @@ public class UserController : ControllerBase
 {
     private readonly RegisterUserHandler _registerUserHandler;
     private readonly GetUsersHandler _getUsersHandler;
-    public UserController(RegisterUserHandler registerUserHandler, GetUsersHandler getUsersHandler)
+    private readonly SetUserActiveHandler _setUserActiveHandler;
+    public UserController(
+        RegisterUserHandler registerUserHandler,
+        GetUsersHandler getUsersHandler,
+        SetUserActiveHandler setUserActiveHandler)
     {
         _registerUserHandler = registerUserHandler;
         _getUsersHandler = getUsersHandler;
+        _setUserActiveHandler = setUserActiveHandler;
     }
 
     [HttpPost]
@@ -32,5 +38,12 @@ public class UserController : ControllerBase
     {
         var result = await _getUsersHandler.Handle(query, cancellationToken);
         return Ok(result);
+    }
+
+    [HttpPut("{id:guid}/active")]
+    public async Task<IActionResult> SetUserActive([FromRoute] Guid id, [FromBody] SetUserActiveCommand command, CancellationToken cancellationToken = default)
+    {
+        await _setUserActiveHandler.Handle(id, command, cancellationToken);
+        return NoContent();
     }
 }

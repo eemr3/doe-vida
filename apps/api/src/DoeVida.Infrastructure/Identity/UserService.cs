@@ -118,4 +118,23 @@ public class UserService : IUserService
       Items = response,
     };
   }
+
+  public async Task SetActiveAsync(Guid id, bool isActive, CancellationToken ct)
+  {
+    var user = await _userManager.FindByIdAsync(id.ToString());
+
+    if (user == null)
+      throw new DomainException("Usuário não encontrado.");
+
+    if (user.IsActive == isActive)
+      return;
+
+    user.IsActive = isActive;
+    var result = await _userManager.UpdateAsync(user);
+    if (!result.Succeeded)
+    {
+      throw new DomainException(
+        string.Join("; ", result.Errors.Select(e => e.Description)));
+    }
+  }
 }
