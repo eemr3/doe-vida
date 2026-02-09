@@ -30,7 +30,7 @@ function getAdminNavItems(userRole?: string): NavItem[] {
     { label: 'Doadores', value: 'donors-list' },
   ];
   if (userRole === 'Admin') {
-    base.push({ label: 'Usuários', value: 'users' });
+    base.push({ label: 'Equipe', value: 'users' });
   }
   base.push({ label: 'Sair', value: 'landing' });
   return base;
@@ -62,7 +62,10 @@ export function Navbar({
             aria-label={isAdmin ? 'Ir para o painel' : 'Ir para início'}
           >
             <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-              <Droplet className="w-6 h-6 text-primary-foreground fill-primary-foreground" aria-hidden />
+              <Droplet
+                className="w-6 h-6 text-primary-foreground fill-primary-foreground"
+                aria-hidden
+              />
             </div>
             <span className="text-xl font-bold text-foreground hidden sm:block">
               Doe Vida
@@ -80,7 +83,7 @@ export function Navbar({
                   'transition-colors',
                   currentPage === item.value
                     ? 'text-primary font-semibold'
-                    : 'text-foreground hover:text-primary'
+                    : 'text-foreground hover:text-primary',
                 )}
               >
                 {item.label}
@@ -105,10 +108,7 @@ export function Navbar({
       </div>
 
       {menuOpen && (
-        <div
-          className="md:hidden border-t border-border bg-card"
-          role="menu"
-        >
+        <div className="md:hidden border-t border-border bg-card" role="menu">
           <div className="px-4 py-3 space-y-3">
             {navItems.map((item) => (
               <button
@@ -122,7 +122,7 @@ export function Navbar({
                   'block w-full text-left px-3 py-2 rounded-lg transition-colors',
                   currentPage === item.value
                     ? 'bg-primary text-primary-foreground'
-                    : 'hover:bg-accent'
+                    : 'hover:bg-accent',
                 )}
               >
                 {item.label}

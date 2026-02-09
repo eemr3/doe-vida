@@ -16,17 +16,13 @@ const maxWidthClasses = {
   '7xl': 'max-w-7xl',
 };
 
-export function PageLayout({
-  children,
-  className,
-  maxWidth = '7xl',
-}: PageLayoutProps) {
+export function PageLayout({ children, className, maxWidth = '7xl' }: PageLayoutProps) {
   return (
     <div
       className={cn(
         'mx-auto px-4 sm:px-6 lg:px-8 py-8',
         maxWidthClasses[maxWidth],
-        className
+        className,
       )}
     >
       {children}

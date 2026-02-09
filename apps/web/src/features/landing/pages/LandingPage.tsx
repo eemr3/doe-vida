@@ -44,14 +44,12 @@ export function LandingPage() {
   const navigate = useNavigate();
 
   const scrollToAbout = () => {
-    document
-      .getElementById('about')
-      ?.scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
     <div className="min-h-screen bg-background">
-      <section className="relative bg-gradient-to-br from-[var(--primary)] to-[#8B0A1F] text-white overflow-hidden">
+      <section className="relative bg-linear-to-br from-primary to-[#8B0A1F] text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10" aria-hidden>
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMtNi42MjcgMC0xMiA1LjM3My0xMiAxMnM1LjM3MyAxMiAxMiAxMiAxMi01LjM3MyAxMi0xMi01LjM3My0xMi0xMi0xMnoiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9nPjwvc3ZnPg==')]" />
         </div>
@@ -65,13 +63,13 @@ export function LandingPage() {
                 <span className="text-red-100">Salve Vidas</span>
               </h1>
               <p className="text-xl text-red-50">
-                Uma única doação pode salvar até 4 vidas. Junte-se a nós e faça
-                parte dessa corrente do bem.
+                Uma única doação pode salvar até 4 vidas. Junte-se a nós e faça parte
+                dessa corrente do bem.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
                   size="lg"
-                  className="bg-white !text-[var(--primary)] hover:bg-red-50"
+                  className="bg-white text-primary! hover:bg-red-50"
                   onClick={() => navigate('/register')}
                 >
                   <Heart className="w-5 h-5" aria-hidden />
@@ -103,9 +101,7 @@ export function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {STATS.map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="text-4xl font-bold text-[var(--primary)] mb-2">
-                  {stat.value}
-                </div>
+                <div className="text-4xl font-bold text-primary mb-2">{stat.value}</div>
                 <div className="text-muted-foreground">{stat.label}</div>
               </div>
             ))}
@@ -116,27 +112,24 @@ export function LandingPage() {
       <section id="about" className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Por que doar sangue?
-            </h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Por que doar sangue?</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              A doação de sangue é um ato de solidariedade que pode salvar
-              vidas. Conheça os benefícios e requisitos.
+              A doação de sangue é um ato de solidariedade que pode salvar vidas. Conheça
+              os benefícios e requisitos.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 mb-16">
             <Card padding="lg" hover>
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-[var(--primary)]/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Heart className="w-6 h-6 text-[var(--primary)]" aria-hidden />
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
+                  <Heart className="w-6 h-6 text-primary" aria-hidden />
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold mb-2">Salve vidas</h3>
                   <p className="text-muted-foreground">
-                    Cada doação pode ajudar até 4 pessoas. Pacientes com câncer,
-                    acidentes graves e cirurgias complexas dependem de doações
-                    regulares.
+                    Cada doação pode ajudar até 4 pessoas. Pacientes com câncer, acidentes
+                    graves e cirurgias complexas dependem de doações regulares.
                   </p>
                 </div>
               </div>
@@ -144,14 +137,14 @@ export function LandingPage() {
 
             <Card padding="lg" hover>
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-[var(--primary)]/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Activity className="w-6 h-6 text-[var(--primary)]" aria-hidden />
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
+                  <Activity className="w-6 h-6 text-primary" aria-hidden />
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold mb-2">Checkup gratuito</h3>
                   <p className="text-muted-foreground">
-                    Antes de cada doação, você passa por uma triagem completa e
-                    exames que verificam sua saúde geral.
+                    Antes de cada doação, você passa por uma triagem completa e exames que
+                    verificam sua saúde geral.
                   </p>
                 </div>
               </div>
@@ -159,16 +152,14 @@ export function LandingPage() {
 
             <Card padding="lg" hover>
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-[var(--primary)]/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Users className="w-6 h-6 text-[var(--primary)]" aria-hidden />
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
+                  <Users className="w-6 h-6 text-primary" aria-hidden />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold mb-2">
-                    Comunidade solidária
-                  </h3>
+                  <h3 className="text-xl font-semibold mb-2">Comunidade solidária</h3>
                   <p className="text-muted-foreground">
-                    Junte-se a milhares de doadores que fazem a diferença todos
-                    os dias. Seja parte dessa corrente do bem.
+                    Junte-se a milhares de doadores que fazem a diferença todos os dias.
+                    Seja parte dessa corrente do bem.
                   </p>
                 </div>
               </div>
@@ -176,21 +167,21 @@ export function LandingPage() {
 
             <Card padding="lg" hover>
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-[var(--primary)]/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Calendar className="w-6 h-6 text-[var(--primary)]" aria-hidden />
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
+                  <Calendar className="w-6 h-6 text-primary" aria-hidden />
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold mb-2">Processo rápido</h3>
                   <p className="text-muted-foreground">
-                    A doação leva cerca de 10 minutos. O processo completo,
-                    incluindo cadastro e lanche, dura cerca de 40 minutos.
+                    A doação leva cerca de 10 minutos. O processo completo, incluindo
+                    cadastro e lanche, dura cerca de 40 minutos.
                   </p>
                 </div>
               </div>
             </Card>
           </div>
 
-          <div className="bg-gradient-to-br from-[var(--primary)]/5 to-[var(--primary)]/10 rounded-2xl p-8 md:p-12">
+          <div className="bg-linear-to-br from-primary/5 to-primary/10 rounded-2xl p-8 md:p-12">
             <h3 className="text-2xl font-bold mb-8 text-center">
               Requisitos para doação
             </h3>
@@ -198,11 +189,8 @@ export function LandingPage() {
               {REQUIREMENTS.map((req, index) => {
                 const Icon = req.icon;
                 return (
-                  <div
-                    key={index}
-                    className="flex flex-col items-center text-center"
-                  >
-                    <div className="w-16 h-16 bg-[var(--primary)] rounded-full flex items-center justify-center mb-4">
+                  <div key={index} className="flex flex-col items-center text-center">
+                    <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4">
                       <Icon className="w-8 h-8 text-white" aria-hidden />
                     </div>
                     <p className="font-medium">{req.text}</p>
@@ -222,9 +210,7 @@ export function LandingPage() {
       <section className="py-20 bg-card">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Tipos Sanguíneos
-            </h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Tipos Sanguíneos</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Distribuição dos tipos sanguíneos na população brasileira
             </p>
@@ -232,19 +218,15 @@ export function LandingPage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 max-w-5xl mx-auto">
             {BLOOD_TYPES.map((blood) => (
               <Card key={blood.type} padding="md" className="text-center">
-                <div className="text-2xl font-bold text-[var(--primary)] mb-1">
-                  {blood.type}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {blood.percentage}
-                </div>
+                <div className="text-2xl font-bold text-primary mb-1">{blood.type}</div>
+                <div className="text-sm text-muted-foreground">{blood.percentage}</div>
               </Card>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-20 bg-gradient-to-br from-[var(--primary)] to-[#8B0A1F] text-white">
+      <section className="py-20 bg-linear-to-br from-primary to-[#8B0A1F] text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">
             Pronto para fazer a diferença?
@@ -255,7 +237,7 @@ export function LandingPage() {
           <Button
             size="lg"
             variant="ghost"
-            className="!bg-white !text-[var(--primary)] hover:!bg-red-50"
+            className="bg-white! text-primary! hover:bg-red-50!"
             onClick={() => navigate('/register')}
           >
             <Droplet className="w-5 h-5 shrink-0" aria-hidden />
@@ -269,7 +251,7 @@ export function LandingPage() {
           <div className="grid md:grid-cols-3 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-[var(--primary)] rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
                   <Droplet className="w-6 h-6 text-white fill-white" aria-hidden />
                 </div>
                 <span className="text-xl font-bold">Doe Vida</span>

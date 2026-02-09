@@ -3,6 +3,7 @@ using DoeVida.Application.UseCases.GetDonors;
 using DoeVida.Application.UseCases.GetUsers;
 using DoeVida.Application.UseCases.User;
 using DoeVida.Domain.Exceptions;
+using DoeVida.Infrastructure.Persistence.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,10 +12,12 @@ namespace DoeVida.Infrastructure.Identity;
 public class UserService : IUserService
 {
   private readonly UserManager<AppUser> _userManager;
+  private readonly DoeVidaDbContext _context;
 
-  public UserService(UserManager<AppUser> userManager)
+  public UserService(UserManager<AppUser> userManager, DoeVidaDbContext context)
   {
     _userManager = userManager;
+    _context = context;
   }
 
   public async Task<RegisterUserResponse> CreateAsync(RegisterUserCommand command, CancellationToken cancellation)
@@ -77,6 +80,23 @@ public class UserService : IUserService
     {
       baseQuery = baseQuery.Where(x =>
        x.IsActive == (query.Status == "active" ? true : false));
+    }
+
+    if (!string.IsNullOrWhiteSpace(query.Role))
+    {
+      var roleName = query.Role.Trim();
+      var roleId = await _context.Roles
+        .Where(r => r.Name == roleName)
+        .Select(r => r.Id)
+        .FirstOrDefaultAsync(ct);
+      if (roleId != null)
+      {
+        var userIdsInRole = await _context.UserRoles
+          .Where(ur => ur.RoleId == roleId)
+          .Select(ur => ur.UserId)
+          .ToListAsync(ct);
+        baseQuery = baseQuery.Where(u => userIdsInRole.Contains(u.Id));
+      }
     }
 
     if (!string.IsNullOrWhiteSpace(query.Sort))

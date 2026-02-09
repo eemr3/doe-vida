@@ -1,39 +1,15 @@
-import { Filter, Eye, Edit, Download, UserPlus } from 'lucide-react';
+import { Download, UserPlus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/shared/ui/atoms/Button';
 import { Card } from '@/shared/ui/atoms/Card';
-import { Badge } from '@/shared/ui/atoms/Badge';
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from '@/shared/ui/atoms/Table';
-import { SelectField } from '@/shared/ui/molecules/SelectField';
-import { Pagination } from '@/shared/ui/molecules/Pagination';
-import { SearchInput } from '@/shared/ui/molecules/SearchInput';
 import { PageLayout } from '@/shared/ui/templates/PageLayout';
+import { Pagination } from '@/shared/ui/molecules/Pagination';
+import {
+  DonorsListFilters,
+  DonorsTable,
+  DonorsListStats,
+} from '../components/organisms';
 import { useDonors } from '../hooks';
-
-const BLOOD_TYPE_OPTIONS = [
-  { value: '', label: 'Todos os tipos' },
-  { value: 'A+', label: 'A+' },
-  { value: 'A-', label: 'A-' },
-  { value: 'B+', label: 'B+' },
-  { value: 'B-', label: 'B-' },
-  { value: 'AB+', label: 'AB+' },
-  { value: 'AB-', label: 'AB-' },
-  { value: 'O+', label: 'O+' },
-  { value: 'O-', label: 'O-' },
-];
-
-const ELIGIBILITY_OPTIONS = [
-  { value: '', label: 'Todos' },
-  { value: 'eligible', label: 'Elegíveis' },
-  { value: 'ineligible', label: 'Não elegíveis' },
-];
 
 function formatDate(dateString: string | null): string {
   if (!dateString) return 'Nunca';
@@ -100,6 +76,26 @@ export function DonorsListPage() {
     return reg.getMonth() === now.getMonth() && reg.getFullYear() === now.getFullYear();
   }).length;
 
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
+  };
+
+  const handleCityChange = (value: string) => {
+    setFilterCity(value);
+    setCurrentPage(1);
+  };
+
+  const handleBloodTypeChange = (value: string) => {
+    setFilterBloodType(value);
+    setCurrentPage(1);
+  };
+
+  const handleEligibilityChange = (value: string) => {
+    setFilterEligibility(value as 'eligible' | 'ineligible' | '');
+    setCurrentPage(1);
+  };
+
   if (loading && donors.length === 0) {
     return (
       <PageLayout>
@@ -150,48 +146,18 @@ export function DonorsListPage() {
           </div>
         </div>
 
-        <Card padding="md">
-          <div className="space-y-4">
-            <SearchInput
-              placeholder="Buscar por nome ou email..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-            />
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <SelectField
-                options={cities}
-                value={filterCity}
-                onChange={(e) => {
-                  setFilterCity(e.target.value);
-                  setCurrentPage(1);
-                }}
-              />
-              <SelectField
-                options={BLOOD_TYPE_OPTIONS}
-                value={filterBloodType}
-                onChange={(e) => {
-                  setFilterBloodType(e.target.value);
-                  setCurrentPage(1);
-                }}
-              />
-              <SelectField
-                options={ELIGIBILITY_OPTIONS}
-                value={filterEligibility}
-                onChange={(e) => {
-                  setFilterEligibility(e.target.value as 'eligible' | 'ineligible' | '');
-                  setCurrentPage(1);
-                }}
-              />
-              <Button variant="outline" onClick={clearFilters} className="w-full">
-                <Filter className="w-4 h-4" aria-hidden />
-                Limpar Filtros
-              </Button>
-            </div>
-          </div>
-        </Card>
+        <DonorsListFilters
+          searchTerm={searchTerm}
+          onSearchChange={handleSearchChange}
+          filterCity={filterCity}
+          onCityChange={handleCityChange}
+          filterBloodType={filterBloodType}
+          onBloodTypeChange={handleBloodTypeChange}
+          filterEligibility={filterEligibility}
+          onEligibilityChange={handleEligibilityChange}
+          cityOptions={cities}
+          onClearFilters={clearFilters}
+        />
       </div>
 
       <Card padding="none">
@@ -204,69 +170,11 @@ export function DonorsListPage() {
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nome</TableHead>
-                    <TableHead className="hidden sm:table-cell">Tipo Sanguíneo</TableHead>
-                    <TableHead className="hidden md:table-cell">Cidade</TableHead>
-                    <TableHead className="hidden lg:table-cell">Última Doação</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {paginatedDonors.map((donor) => (
-                    <TableRow key={donor.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{donor.name}</div>
-                          <div className="text-sm text-muted-foreground sm:hidden">
-                            {donor.bloodType} • {donor.city}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell className="hidden sm:table-cell">
-                        <Badge variant="default" className="bg-primary text-primary-foreground">
-                          {donor.bloodType}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell">{donor.city}</TableCell>
-                      <TableCell className="hidden lg:table-cell">
-                        {formatDate(donor.lastDonation)}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={donor.eligible ? 'success' : 'warning'}>
-                          {donor.eligible ? 'Elegível' : 'Aguardando'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center justify-end gap-2">
-                          <button
-                            type="button"
-                            onClick={() => navigate(`/donors/${donor.id}`)}
-                            className="p-2 rounded-lg hover:bg-accent transition-colors"
-                            title="Visualizar"
-                            aria-label={`Ver detalhes de ${donor.name}`}
-                          >
-                            <Eye className="w-4 h-4" aria-hidden />
-                          </button>
-                          <button
-                            type="button"
-                            className="p-2 rounded-lg hover:bg-accent transition-colors"
-                            title="Editar"
-                            aria-label={`Editar ${donor.name}`}
-                          >
-                            <Edit className="w-4 h-4" aria-hidden />
-                          </button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+            <DonorsTable
+              donors={paginatedDonors}
+              onViewDonor={(id) => navigate(`/donors/${id}`)}
+              formatDate={formatDate}
+            />
             {totalPages > 1 && (
               <div className="border-t border-border p-4">
                 <Pagination
@@ -280,27 +188,13 @@ export function DonorsListPage() {
         )}
       </Card>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
-        <Card padding="md">
-          <div className="text-sm text-muted-foreground mb-1">Total de Doadores</div>
-          <div className="text-2xl font-bold text-[primry)]">{totalCount}</div>
-        </Card>
-        <Card padding="md">
-          <div className="text-sm text-muted-foreground mb-1">Elegíveis</div>
-          <div className="text-2xl font-bold text-[succss)]">
-            {donors.filter((d) => d.eligible).length}
-          </div>
-        </Card>
-        <Card padding="md">
-          <div className="text-sm text-muted-foreground mb-1">Aguardando</div>
-          <div className="text-2xl font-bold text-[warnng)]">
-            {donors.filter((d) => !d.eligible).length}
-          </div>
-        </Card>
-        <Card padding="md">
-          <div className="text-sm text-muted-foreground mb-1">Novos este mês</div>
-          <div className="text-2xl font-bold text-info">{newThisMonth}</div>
-        </Card>
+      <div className="mt-8">
+        <DonorsListStats
+          totalCount={totalCount}
+          eligibleCount={donors.filter((d) => d.eligible).length}
+          ineligibleCount={donors.filter((d) => !d.eligible).length}
+          newThisMonthCount={newThisMonth}
+        />
       </div>
     </PageLayout>
   );

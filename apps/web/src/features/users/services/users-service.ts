@@ -78,4 +78,8 @@ export const usersService = {
     const { data } = await apiClient.post<RegisterUserApiResponse>('/api/users', body);
     return { id: data.id };
   },
+
+  async setActive(userId: string, isActive: boolean): Promise<void> {
+    await apiClient.put(`/api/users/${userId}/active`, { isActive });
+  },
 };
