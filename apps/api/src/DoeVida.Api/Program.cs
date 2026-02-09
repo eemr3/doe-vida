@@ -1,8 +1,6 @@
 using System.Text;
 using DoeVida.Api.Identity;
-using DoeVida.Api.Services;
 using DoeVida.Application.DependencyInjection;
-using DoeVida.Application.Interfaces;
 using DoeVida.Infrastructure.Identity;
 using DoeVida.Infrastructure.Persistence.Context;
 using DoeVida.Infrastructure.Persistence.DependencyInjection;
@@ -73,7 +71,6 @@ builder.Services.AddAuthorization();
 
 // Dependency Injection das camadas
 builder.Services.AddApplication().AddInfrastructure(builder.Configuration);
-builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 

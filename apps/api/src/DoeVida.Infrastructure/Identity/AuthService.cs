@@ -3,11 +3,11 @@ using System.Security.Claims;
 using System.Text;
 using DoeVida.Application.Contracts.Auth;
 using DoeVida.Application.Interfaces;
-using DoeVida.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace DoeVida.Api.Services;
+namespace DoeVida.Infrastructure.Identity;
 
 public class AuthService : IAuthService
 {
