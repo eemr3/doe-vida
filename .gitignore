@@ -54,3 +54,4 @@ coverage/
 # Optional: manter prototype apenas como referência (descomente para ignorar)
 # prototype/
 .cursor/
+*-workspace
