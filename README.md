@@ -44,8 +44,8 @@ docker compose up -d
 
 **Portas não padrão** — Para evitar conflito com Postgres ou Redis já rodando na sua máquina (que costumam usar 5432 e 6379), este projeto usa:
 
-| Serviço   | Porta no host | Porta padrão |
-|-----------|----------------|--------------|
+| Serviço    | Porta no host | Porta padrão |
+| ---------- | ------------- | ------------ |
 | PostgreSQL | **5433**      | 5432         |
 | Redis      | **6380**      | 6379         |
 
@@ -53,11 +53,10 @@ Assim você pode ter outro Postgres/Redis na porta padrão sem conflito. O `apps
 
 Credenciais do Postgres (batem com o `appsettings.json`): usuário `toch`, senha `supersecretpassword`, database `doevida-db`. Para mudar, copie `.env.example` para `.env` e ajuste.
 
-Para aplicar as migrations da API (primeira vez ou após mudanças):
+Para aplicar as migrations da API (primeira vez ou após mudanças), na raiz do repo:
 
 ```bash
-cd apps/api
-dotnet ef database update --project src/DoeVida.Api/DoeVida.Api.csproj
+cd apps/api && dotnet ef database update --project src/DoeVida.Infrastructure/DoeVida.Infrastructure.csproj --startup-project src/DoeVida.Api/DoeVida.Api.csproj
 ```
 
 ### Frontend (web)
@@ -78,6 +77,8 @@ cd apps/web && npm run dev
 
 ### Backend (API)
 
+**Antes de subir a API**, certifique-se de que o PostgreSQL está rodando (`docker compose up -d` na raiz). Caso contrário a API falhará ao conectar (connection refused na porta 5433).
+
 Na **raiz do repositório**:
 
 ```bash
@@ -97,9 +98,9 @@ A API usa arquivos de configuração em `src/DoeVida.Api/` (`appsettings.json`, 
 
 ## Stack
 
-| App | Tecnologias |
-|-----|-------------|
-| **api** | .NET, ASP.NET Core, Entity Framework Core, Identity |
+| App     | Tecnologias                                                                 |
+| ------- | --------------------------------------------------------------------------- |
+| **api** | .NET, ASP.NET Core, Entity Framework Core, Identity                         |
 | **web** | React 18, TypeScript, Vite, React Router, TanStack Query, Tailwind CSS, Zod |
 
 ## Documentação
