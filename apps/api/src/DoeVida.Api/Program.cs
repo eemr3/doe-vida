@@ -1,5 +1,6 @@
 using System.Text;
 using DoeVida.Api.Identity;
+using DoeVida.Api.Middlewares;
 using DoeVida.Application.DependencyInjection;
 using DoeVida.Infrastructure.Identity;
 using DoeVida.Infrastructure.Persistence.Context;
@@ -78,6 +79,7 @@ var app = builder.Build();
 await IdentitySeed.SeedAsync(app.Services, app.Configuration, app.Logger);
 
 app.UseCors();
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 
