@@ -2,31 +2,51 @@ import { useEffect, useState } from 'react';
 import {
   Users,
   UserCheck,
-  UserPlus,
   Droplet,
-  ArrowRight,
   Calendar,
+  TrendingUp,
+  Activity,
+  Clock,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
+} from 'recharts';
 import { Button } from '@/shared/ui/atoms/Button';
 import { Card } from '@/shared/ui/atoms/Card';
-import { CardHeader } from '@/shared/ui/molecules/CardHeader';
-import { CardContent } from '@/shared/ui/molecules/CardContent';
 import { PageLayout } from '@/shared/ui/templates/PageLayout';
 import { donorsService } from '@/features/donors/services';
+import type { Donor } from '@/features/donors/types';
 
-export interface DashboardStats {
-  totalDonors: number;
-  eligibleCount: number;
-  newThisMonth: number;
-}
+const CHART_COLORS = [
+  '#C41E3A',
+  '#DC2626',
+  '#EF4444',
+  '#F87171',
+  '#FCA5A5',
+  '#FECACA',
+  '#FEE2E2',
+  '#FFF1F2',
+];
 
 export function DashboardPage() {
   const navigate = useNavigate();
-  const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const [recentDonors, setRecentDonors] = useState<{ id: string; name: string; city: string }[]>([]);
+  const [donors, setDonors] = useState<Donor[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [eligibleCount, setEligibleCount] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -36,25 +56,13 @@ export function DashboardPage() {
     Promise.all([
       donorsService.list({ page: 1, pageSize: 1 }),
       donorsService.list({ page: 1, pageSize: 1, eligible: true }),
-      donorsService.list({ page: 1, pageSize: 200 }),
-      donorsService.list({ page: 1, pageSize: 5 }),
+      donorsService.list({ page: 1, pageSize: 500 }),
     ])
-      .then(([totalRes, eligibleRes, forNewMonthRes, recentRes]) => {
+      .then(([totalRes, eligibleRes, listRes]) => {
         if (cancelled) return;
-        const now = new Date();
-        const newThisMonth = forNewMonthRes.items.filter((d) => {
-          if (!d.registrationDate) return false;
-          const reg = new Date(d.registrationDate);
-          return reg.getMonth() === now.getMonth() && reg.getFullYear() === now.getFullYear();
-        }).length;
-        setStats({
-          totalDonors: totalRes.totalCount,
-          eligibleCount: eligibleRes.totalCount,
-          newThisMonth,
-        });
-        setRecentDonors(
-          recentRes.items.map((d) => ({ id: d.id, name: d.name, city: d.city }))
-        );
+        setTotalCount(totalRes.totalCount);
+        setEligibleCount(eligibleRes.totalCount);
+        setDonors(listRes.items);
       })
       .catch((err) => {
         if (!cancelled) setError(err instanceof Error ? err : new Error(String(err)));
@@ -67,10 +75,10 @@ export function DashboardPage() {
     };
   }, []);
 
-  if (loading && !stats) {
+  if (loading && donors.length === 0) {
     return (
-      <PageLayout maxWidth="lg" className="py-8">
-        <div className="max-w-5xl mx-auto text-center py-12 text-muted-foreground">
+      <PageLayout>
+        <div className="max-w-7xl mx-auto text-center py-12 text-muted-foreground">
           Carregando dashboard...
         </div>
       </PageLayout>
@@ -79,8 +87,8 @@ export function DashboardPage() {
 
   if (error) {
     return (
-      <PageLayout maxWidth="lg" className="py-8">
-        <div className="max-w-5xl mx-auto flex items-center justify-center">
+      <PageLayout>
+        <div className="max-w-7xl mx-auto flex items-center justify-center py-12">
           <Card padding="lg" className="text-center">
             <h2 className="text-2xl font-bold mb-4">Erro ao carregar dados</h2>
             <p className="text-muted-foreground mb-4">{error.message}</p>
@@ -93,140 +101,335 @@ export function DashboardPage() {
     );
   }
 
-  const s = stats ?? { totalDonors: 0, eligibleCount: 0, newThisMonth: 0 };
+  const now = new Date();
+  const newThisMonth = donors.filter((d) => {
+    if (!d.registrationDate) return false;
+    const reg = new Date(d.registrationDate);
+    return reg.getMonth() === now.getMonth() && reg.getFullYear() === now.getFullYear();
+  }).length;
 
-  const statCards: Array<{
-    title: string;
-    value: number;
-    icon: typeof Users;
-    valueClass: string;
-    iconBgClass: string;
-    iconClass: string;
-    description: string;
-  }> = [
-    {
-      title: 'Total de doadores',
-      value: s.totalDonors,
-      icon: Users,
-      valueClass: 'text-primary',
-      iconBgClass: 'bg-primary/10',
-      iconClass: 'text-primary',
-      description: 'Cadastrados no sistema',
-    },
-    {
-      title: 'Elegíveis para doar',
-      value: s.eligibleCount,
-      icon: UserCheck,
-      valueClass: 'text-success',
-      iconBgClass: 'bg-success/10',
-      iconClass: 'text-success',
-      description: 'Podem doar agora',
-    },
-    {
-      title: 'Novos este mês',
-      value: s.newThisMonth,
-      icon: Calendar,
-      valueClass: 'text-info',
-      iconBgClass: 'bg-info/10',
-      iconClass: 'text-info',
-      description: 'Cadastros no mês atual',
-    },
+  const totalDonations = donors.reduce((sum, d) => sum + (d.donationHistory?.length ?? 0), 0);
+  const upcomingCount = donors.filter((d) => d.nextDonationDate).length;
+
+  const bloodTypeStats = donors.reduce<Record<string, number>>((acc, d) => {
+    const t = d.bloodType || '?';
+    acc[t] = (acc[t] || 0) + 1;
+    return acc;
+  }, {});
+  const bloodTypeData = Object.entries(bloodTypeStats).map(([name, value]) => ({ name, value }));
+
+  const cityStats = donors.reduce<Record<string, number>>((acc, d) => {
+    const c = d.city || 'Outros';
+    acc[c] = (acc[c] || 0) + 1;
+    return acc;
+  }, {});
+  const cityData = Object.entries(cityStats)
+    .map(([city, count]) => ({ city, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
+
+  const recentDonations = donors
+    .filter((d) => d.lastDonation)
+    .sort((a, b) => {
+      const da = a.lastDonation ? new Date(a.lastDonation).getTime() : 0;
+      const db = b.lastDonation ? new Date(b.lastDonation).getTime() : 0;
+      return db - da;
+    })
+    .slice(0, 5);
+
+  const monthlyDonations = [
+    { month: 'Set', donations: 0 },
+    { month: 'Out', donations: 0 },
+    { month: 'Nov', donations: 0 },
+    { month: 'Dez', donations: 0 },
+    { month: 'Jan', donations: 0 },
+    { month: 'Fev', donations: 0 },
   ];
 
-  return (
-    <PageLayout maxWidth="lg" className="py-8">
-      <div className="max-w-5xl mx-auto space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Visão geral dos doadores e ações rápidas.
-          </p>
-        </div>
+  const firstTimeDonorsCount = donors.filter((d) => !d.lastDonation).length;
 
-        <div className="grid sm:grid-cols-3 gap-6">
-          {statCards.map(({ title, value, icon: Icon, valueClass, iconBgClass, iconClass, description }) => (
-            <Card key={title} padding="lg" className="border-border">
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm text-muted-foreground mb-1">{title}</p>
-                  <p className={`text-3xl font-bold ${valueClass}`}>{value}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{description}</p>
+  return (
+    <>
+      {/* Header full-width (como no prototype) */}
+      <div className="w-full bg-[var(--primary)] text-[var(--primary-foreground)] px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl font-bold mb-2">Dashboard Administrativo</h1>
+          <p className="text-white/90">Visão geral do sistema de doação de sangue</p>
+        </div>
+      </div>
+
+      <PageLayout maxWidth="7xl" className="py-8">
+        <div className="max-w-7xl mx-auto space-y-8">
+          {/* 4 cards de estatísticas */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card padding="lg" className="hover:shadow-lg transition-shadow">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="text-sm text-muted-foreground mb-1">Total de Doadores</p>
+                  <h3 className="text-3xl font-bold text-foreground mb-2">{totalCount}</h3>
+                  {newThisMonth > 0 && (
+                    <p className="text-xs text-[var(--success)] flex items-center gap-1">
+                      <TrendingUp className="w-3 h-3" />
+                      +{newThisMonth} este mês
+                    </p>
+                  )}
                 </div>
-                <div
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${iconBgClass}`}
-                >
-                  <Icon className={`w-6 h-6 ${iconClass}`} aria-hidden />
+                <div className="w-12 h-12 bg-[var(--primary)]/10 rounded-lg flex items-center justify-center shrink-0">
+                  <Users className="w-6 h-6 text-[var(--primary)]" aria-hidden />
                 </div>
               </div>
             </Card>
-          ))}
-        </div>
 
-        <div className="grid lg:grid-cols-2 gap-6">
-          <Card padding="lg">
-            <CardHeader title="Ações rápidas" />
-            <CardContent className="space-y-3">
-              <Button
-                className="w-full justify-between"
-                onClick={() => navigate('/donors')}
-              >
-                Ver lista de doadores
-                <ArrowRight className="w-4 h-4" aria-hidden />
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full justify-between border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                onClick={() => navigate('/register')}
-              >
-                <UserPlus className="w-4 h-4" aria-hidden />
-                Cadastrar novo doador
-              </Button>
-            </CardContent>
-          </Card>
+            <Card padding="lg" className="hover:shadow-lg transition-shadow">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="text-sm text-muted-foreground mb-1">Total de Doações</p>
+                  <h3 className="text-3xl font-bold text-foreground mb-2">{totalDonations}</h3>
+                  <p className="text-xs text-muted-foreground">Registradas no sistema</p>
+                </div>
+                <div className="w-12 h-12 bg-[var(--primary)]/10 rounded-lg flex items-center justify-center shrink-0">
+                  <Droplet className="w-6 h-6 text-[var(--primary)]" aria-hidden />
+                </div>
+              </div>
+            </Card>
 
-          <Card padding="lg">
-            <CardHeader
-              title="Alguns doadores"
-              subtitle="Primeiros da lista"
-            />
-            <CardContent>
-              {recentDonors.length === 0 ? (
-                <p className="text-sm text-muted-foreground py-4">
-                  Nenhum doador cadastrado ainda.
-                </p>
+            <Card padding="lg" className="hover:shadow-lg transition-shadow">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="text-sm text-muted-foreground mb-1">Doadores Elegíveis</p>
+                  <h3 className="text-3xl font-bold text-foreground mb-2">{eligibleCount}</h3>
+                  <p className="text-xs text-muted-foreground">
+                    {totalCount > 0
+                      ? `${Math.round((eligibleCount / totalCount) * 100)}% do total`
+                      : '—'}
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-[var(--success)]/10 rounded-lg flex items-center justify-center shrink-0">
+                  <UserCheck className="w-6 h-6 text-[var(--success)]" aria-hidden />
+                </div>
+              </div>
+            </Card>
+
+            <Card padding="lg" className="hover:shadow-lg transition-shadow">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="text-sm text-muted-foreground mb-1">Próximas Doações</p>
+                  <h3 className="text-3xl font-bold text-foreground mb-2">{upcomingCount}</h3>
+                  <p className="text-xs text-[var(--info)]">Com data prevista</p>
+                </div>
+                <div className="w-12 h-12 bg-[var(--info)]/10 rounded-lg flex items-center justify-center shrink-0">
+                  <Calendar className="w-6 h-6 text-[var(--info)]" aria-hidden />
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          {/* Gráficos */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card padding="lg">
+              <h3 className="font-semibold text-lg mb-6">Distribuição de Tipos Sanguíneos</h3>
+              {bloodTypeData.length === 0 ? (
+                <div className="h-[300px] flex items-center justify-center text-muted-foreground text-sm">
+                  Sem dados de doadores
+                </div>
               ) : (
-                <ul className="space-y-2">
-                  {recentDonors.map((d) => (
-                    <li key={d.id}>
-                      <button
-                        type="button"
-                        onClick={() => navigate(`/donors/${d.id}`)}
-                        className="flex items-center gap-3 w-full text-left p-2 rounded-lg hover:bg-accent transition-colors group"
-                      >
-                        <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                          <Droplet className="w-4 h-4 text-primary" aria-hidden />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <span className="font-medium block truncate">{d.name}</span>
-                          <span className="text-sm text-muted-foreground">{d.city}</span>
-                        </div>
-                        <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary shrink-0" aria-hidden />
-                      </button>
-                    </li>
-                  ))}
-                </ul>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={bloodTypeData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      label={({ name, percent }: { name: string; percent: number }) =>
+                        `${name}: ${(percent * 100).toFixed(0)}%`
+                      }
+                    >
+                      {bloodTypeData.map((_, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={CHART_COLORS[index % CHART_COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
               )}
-              <Button
-                variant="ghost"
-                className="w-full mt-2"
-                onClick={() => navigate('/donors')}
-              >
-                Ver todos
-              </Button>
-            </CardContent>
-          </Card>
+            </Card>
+
+            <Card padding="lg">
+              <h3 className="font-semibold text-lg mb-6">Doações nos Últimos 6 Meses</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={monthlyDonations}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                  <XAxis dataKey="month" className="text-muted-foreground" />
+                  <YAxis className="text-muted-foreground" />
+                  <Tooltip />
+                  <Line
+                    type="monotone"
+                    dataKey="donations"
+                    stroke="var(--primary)"
+                    strokeWidth={3}
+                    dot={{ fill: 'var(--primary)', r: 5 }}
+                    activeDot={{ r: 8 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </Card>
+          </div>
+
+          {/* Top 5 Cidades + Doações Recentes */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card padding="lg">
+              <h3 className="font-semibold text-lg mb-6">Top 5 Cidades</h3>
+              {cityData.length === 0 ? (
+                <div className="h-[300px] flex items-center justify-center text-muted-foreground text-sm">
+                  Sem dados
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={cityData} layout="vertical" margin={{ left: 10, right: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                    <XAxis type="number" />
+                    <YAxis dataKey="city" type="category" width={100} />
+                    <Tooltip />
+                    <Bar dataKey="count" fill="var(--primary)" radius={[0, 8, 8, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </Card>
+
+            <Card padding="lg">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="font-semibold text-lg">Doações Recentes</h3>
+                <Button variant="ghost" size="sm" onClick={() => navigate('/donors')}>
+                  Ver todas
+                </Button>
+              </div>
+              <div className="space-y-4">
+                {recentDonations.length === 0 ? (
+                  <p className="text-sm text-muted-foreground py-4">
+                    Nenhuma doação recente registrada.
+                  </p>
+                ) : (
+                  recentDonations.map((donor) => (
+                    <button
+                      key={donor.id}
+                      type="button"
+                      onClick={() => navigate(`/donors/${donor.id}`)}
+                      className="flex items-start gap-3 p-3 w-full text-left hover:bg-accent rounded-lg transition-colors"
+                    >
+                      <div className="w-10 h-10 bg-[var(--primary)]/10 rounded-full flex items-center justify-center shrink-0">
+                        <Droplet className="w-5 h-5 text-[var(--primary)]" aria-hidden />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate">{donor.name}</p>
+                        <div className="flex items-center gap-4 mt-1">
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Activity className="w-3 h-3" />
+                            {donor.bloodType}
+                          </span>
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {donor.lastDonation
+                              ? new Date(donor.lastDonation).toLocaleDateString('pt-BR')
+                              : 'N/A'}
+                          </span>
+                        </div>
+                      </div>
+                    </button>
+                  ))
+                )}
+              </div>
+            </Card>
+          </div>
+
+          {/* Alertas e Ações Rápidas */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <Card
+              padding="lg"
+              className="border-l-4 border-l-[var(--warning)] bg-[var(--warning)]/5"
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 bg-[var(--warning)]/10 rounded-lg flex items-center justify-center shrink-0">
+                  <Activity className="w-5 h-5 text-[var(--warning)]" aria-hidden />
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-1">Alerta de Estoque</h4>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Tipos AB- e O- estão com estoque baixo
+                  </p>
+                  <Button variant="outline" size="sm">
+                    Ver detalhes
+                  </Button>
+                </div>
+              </div>
+            </Card>
+
+            <Card
+              padding="lg"
+              className="border-l-4 border-l-[var(--info)] bg-[var(--info)]/5"
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 bg-[var(--info)]/10 rounded-lg flex items-center justify-center shrink-0">
+                  <Calendar className="w-5 h-5 text-[var(--info)]" aria-hidden />
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-1">Campanhas Ativas</h4>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    2 campanhas de doação em andamento
+                  </p>
+                  <Button variant="outline" size="sm">
+                    Gerenciar
+                  </Button>
+                </div>
+              </div>
+            </Card>
+
+            <Card
+              padding="lg"
+              className="border-l-4 border-l-[var(--success)] bg-[var(--success)]/5"
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 bg-[var(--success)]/10 rounded-lg flex items-center justify-center shrink-0">
+                  <UserCheck className="w-5 h-5 text-[var(--success)]" aria-hidden />
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-1">Novos Cadastros</h4>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    {firstTimeDonorsCount} doador(es) aguardando primeira doação
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate('/donors')}
+                  >
+                    Ver lista
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          {/* Ações principais */}
+          <div className="flex flex-wrap gap-4">
+            <Button onClick={() => navigate('/donors')}>
+              <Users className="w-4 h-4" aria-hidden />
+              Ver Todos os Doadores
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/users')}>
+              <Activity className="w-4 h-4" aria-hidden />
+              Gerenciar Equipe
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/register')}>
+              <Droplet className="w-4 h-4" aria-hidden />
+              Cadastrar Doador
+            </Button>
+          </div>
         </div>
-      </div>
-    </PageLayout>
+      </PageLayout>
+    </>
   );
 }
