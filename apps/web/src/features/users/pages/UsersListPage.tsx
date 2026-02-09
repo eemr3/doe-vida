@@ -223,13 +223,13 @@ export function UsersListPage() {
         </Card>
         <Card padding="md">
           <div className="text-sm text-muted-foreground mb-1">Ativos</div>
-          <div className="text-2xl font-bold text-[var(--success)]">
+          <div className="text-2xl font-bold text-success">
             {users.filter((u) => u.isActive).length}
           </div>
         </Card>
         <Card padding="md">
           <div className="text-sm text-muted-foreground mb-1">Inativos</div>
-          <div className="text-2xl font-bold text-[var(--warning)]">
+          <div className="text-2xl font-bold text-warning">
             {users.filter((u) => !u.isActive).length}
           </div>
         </Card>
