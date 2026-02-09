@@ -10,14 +10,12 @@ namespace DoeVida.Api.Controllers;
 [ApiController]
 [Route("api/users")]
 [Authorize(Roles = "Admin")]
-public class UserControllers : ControllerBase
+public class UserController : ControllerBase
 {
-    private readonly ILogger<UserControllers> _logger;
     private readonly RegisterUserHandler _registerUserHandler;
     private readonly GetUsersHandler _getUsersHandler;
-    public UserControllers(ILogger<UserControllers> logger, RegisterUserHandler registerUserHandler, GetUsersHandler getUsersHandler)
+    public UserController(RegisterUserHandler registerUserHandler, GetUsersHandler getUsersHandler)
     {
-        _logger = logger;
         _registerUserHandler = registerUserHandler;
         _getUsersHandler = getUsersHandler;
     }
