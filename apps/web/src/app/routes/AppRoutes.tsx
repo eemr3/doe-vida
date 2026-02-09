@@ -9,7 +9,7 @@ import {
   DonorDetailsPage,
 } from '@/features/donors/pages';
 import { DashboardPage } from '@/features/dashboard/pages';
-import { UsersPlaceholderPage } from '@/features/users/pages';
+import { UsersListPage, RegisterUserPage } from '@/features/users/pages';
 import { useAuth } from '@/app/providers/AuthProvider';
 import { useToast } from '@/app/providers/ToastProvider';
 import { setOnUnauthorized } from '@/shared/api/client';
@@ -39,7 +39,7 @@ function RequireAdmin({ children }: { children: React.ReactNode }) {
 function pathToNavPage(path: string): string {
   if (path === '/') return 'landing';
   if (path === '/dashboard') return 'dashboard';
-  if (path === '/users') return 'users';
+  if (path === '/users' || path.startsWith('/users/')) return 'users';
   if (path.startsWith('/donors/') && path !== '/donors') return 'donor-details';
   const map: Record<string, string> = {
     '/register': 'register',
@@ -171,7 +171,15 @@ export function AppRoutes() {
           path="/users"
           element={
             <RequireAdmin>
-              <UsersPlaceholderPage />
+              <UsersListPage />
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="/users/new"
+          element={
+            <RequireAdmin>
+              <RegisterUserPage />
             </RequireAdmin>
           }
         />
