@@ -108,7 +108,10 @@ export function DashboardPage() {
     return reg.getMonth() === now.getMonth() && reg.getFullYear() === now.getFullYear();
   }).length;
 
-  const totalDonations = donors.reduce((sum, d) => sum + (d.donationHistory?.length ?? 0), 0);
+  const totalDonations = donors.reduce(
+    (sum, d) => sum + (d.donationHistory?.length ?? 0),
+    0,
+  );
   const upcomingCount = donors.filter((d) => d.nextDonationDate).length;
 
   const bloodTypeStats = donors.reduce<Record<string, number>>((acc, d) => {
@@ -116,7 +119,10 @@ export function DashboardPage() {
     acc[t] = (acc[t] || 0) + 1;
     return acc;
   }, {});
-  const bloodTypeData = Object.entries(bloodTypeStats).map(([name, value]) => ({ name, value }));
+  const bloodTypeData = Object.entries(bloodTypeStats).map(([name, value]) => ({
+    name,
+    value,
+  }));
 
   const cityStats = donors.reduce<Record<string, number>>((acc, d) => {
     const c = d.city || 'Outros';
@@ -151,7 +157,7 @@ export function DashboardPage() {
   return (
     <>
       {/* Header full-width (como no prototype) */}
-      <div className="w-full bg-[var(--primary)] text-[var(--primary-foreground)] px-4 sm:px-6 lg:px-8 py-8">
+      <div className="w-full bg-primary text-primary-foreground px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold mb-2">Dashboard Administrativo</h1>
           <p className="text-white/90">Visão geral do sistema de doação de sangue</p>
@@ -166,16 +172,17 @@ export function DashboardPage() {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <p className="text-sm text-muted-foreground mb-1">Total de Doadores</p>
-                  <h3 className="text-3xl font-bold text-foreground mb-2">{totalCount}</h3>
+                  <h3 className="text-3xl font-bold text-foreground mb-2">
+                    {totalCount}
+                  </h3>
                   {newThisMonth > 0 && (
-                    <p className="text-xs text-[var(--success)] flex items-center gap-1">
-                      <TrendingUp className="w-3 h-3" />
-                      +{newThisMonth} este mês
+                    <p className="text-xs text-success flex items-center gap-1">
+                      <TrendingUp className="w-3 h-3" />+{newThisMonth} este mês
                     </p>
                   )}
                 </div>
-                <div className="w-12 h-12 bg-[var(--primary)]/10 rounded-lg flex items-center justify-center shrink-0">
-                  <Users className="w-6 h-6 text-[var(--primary)]" aria-hidden />
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
+                  <Users className="w-6 h-6 text-primary" aria-hidden />
                 </div>
               </div>
             </Card>
@@ -184,11 +191,13 @@ export function DashboardPage() {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <p className="text-sm text-muted-foreground mb-1">Total de Doações</p>
-                  <h3 className="text-3xl font-bold text-foreground mb-2">{totalDonations}</h3>
+                  <h3 className="text-3xl font-bold text-foreground mb-2">
+                    {totalDonations}
+                  </h3>
                   <p className="text-xs text-muted-foreground">Registradas no sistema</p>
                 </div>
-                <div className="w-12 h-12 bg-[var(--primary)]/10 rounded-lg flex items-center justify-center shrink-0">
-                  <Droplet className="w-6 h-6 text-[var(--primary)]" aria-hidden />
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
+                  <Droplet className="w-6 h-6 text-primary" aria-hidden />
                 </div>
               </div>
             </Card>
@@ -197,15 +206,17 @@ export function DashboardPage() {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <p className="text-sm text-muted-foreground mb-1">Doadores Elegíveis</p>
-                  <h3 className="text-3xl font-bold text-foreground mb-2">{eligibleCount}</h3>
+                  <h3 className="text-3xl font-bold text-foreground mb-2">
+                    {eligibleCount}
+                  </h3>
                   <p className="text-xs text-muted-foreground">
                     {totalCount > 0
                       ? `${Math.round((eligibleCount / totalCount) * 100)}% do total`
                       : '—'}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-[var(--success)]/10 rounded-lg flex items-center justify-center shrink-0">
-                  <UserCheck className="w-6 h-6 text-[var(--success)]" aria-hidden />
+                <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center shrink-0">
+                  <UserCheck className="w-6 h-6 text-success" aria-hidden />
                 </div>
               </div>
             </Card>
@@ -214,11 +225,13 @@ export function DashboardPage() {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <p className="text-sm text-muted-foreground mb-1">Próximas Doações</p>
-                  <h3 className="text-3xl font-bold text-foreground mb-2">{upcomingCount}</h3>
-                  <p className="text-xs text-[var(--info)]">Com data prevista</p>
+                  <h3 className="text-3xl font-bold text-foreground mb-2">
+                    {upcomingCount}
+                  </h3>
+                  <p className="text-xs text-info">Com data prevista</p>
                 </div>
-                <div className="w-12 h-12 bg-[var(--info)]/10 rounded-lg flex items-center justify-center shrink-0">
-                  <Calendar className="w-6 h-6 text-[var(--info)]" aria-hidden />
+                <div className="w-12 h-12 bg-info/10 rounded-lg flex items-center justify-center shrink-0">
+                  <Calendar className="w-6 h-6 text-info" aria-hidden />
                 </div>
               </div>
             </Card>
@@ -227,7 +240,9 @@ export function DashboardPage() {
           {/* Gráficos */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card padding="lg">
-              <h3 className="font-semibold text-lg mb-6">Distribuição de Tipos Sanguíneos</h3>
+              <h3 className="font-semibold text-lg mb-6">
+                Distribuição de Tipos Sanguíneos
+              </h3>
               {bloodTypeData.length === 0 ? (
                 <div className="h-[300px] flex items-center justify-center text-muted-foreground text-sm">
                   Sem dados de doadores
@@ -290,7 +305,11 @@ export function DashboardPage() {
                 </div>
               ) : (
                 <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={cityData} layout="vertical" margin={{ left: 10, right: 20 }}>
+                  <BarChart
+                    data={cityData}
+                    layout="vertical"
+                    margin={{ left: 10, right: 20 }}
+                  >
                     <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                     <XAxis type="number" />
                     <YAxis dataKey="city" type="category" width={100} />
@@ -321,8 +340,8 @@ export function DashboardPage() {
                       onClick={() => navigate(`/donors/${donor.id}`)}
                       className="flex items-start gap-3 p-3 w-full text-left hover:bg-accent rounded-lg transition-colors"
                     >
-                      <div className="w-10 h-10 bg-[var(--primary)]/10 rounded-full flex items-center justify-center shrink-0">
-                        <Droplet className="w-5 h-5 text-[var(--primary)]" aria-hidden />
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
+                        <Droplet className="w-5 h-5 text-primary" aria-hidden />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-sm truncate">{donor.name}</p>
@@ -348,13 +367,10 @@ export function DashboardPage() {
 
           {/* Alertas e Ações Rápidas */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <Card
-              padding="lg"
-              className="border-l-4 border-l-[var(--warning)] bg-[var(--warning)]/5"
-            >
+            <Card padding="lg" className="border-l-4 border-l-warning bg-warning/5">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 bg-[var(--warning)]/10 rounded-lg flex items-center justify-center shrink-0">
-                  <Activity className="w-5 h-5 text-[var(--warning)]" aria-hidden />
+                <div className="w-10 h-10 bg-warning/10 rounded-lg flex items-center justify-center shrink-0">
+                  <Activity className="w-5 h-5 text-warning" aria-hidden />
                 </div>
                 <div>
                   <h4 className="font-semibold mb-1">Alerta de Estoque</h4>
@@ -368,13 +384,10 @@ export function DashboardPage() {
               </div>
             </Card>
 
-            <Card
-              padding="lg"
-              className="border-l-4 border-l-[var(--info)] bg-[var(--info)]/5"
-            >
+            <Card padding="lg" className="border-l-4 border-l-info bg-info/5">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 bg-[var(--info)]/10 rounded-lg flex items-center justify-center shrink-0">
-                  <Calendar className="w-5 h-5 text-[var(--info)]" aria-hidden />
+                <div className="w-10 h-10 bg-info/10 rounded-lg flex items-center justify-center shrink-0">
+                  <Calendar className="w-5 h-5 text-info" aria-hidden />
                 </div>
                 <div>
                   <h4 className="font-semibold mb-1">Campanhas Ativas</h4>
@@ -388,24 +401,17 @@ export function DashboardPage() {
               </div>
             </Card>
 
-            <Card
-              padding="lg"
-              className="border-l-4 border-l-[var(--success)] bg-[var(--success)]/5"
-            >
+            <Card padding="lg" className="border-l-4 border-l-success bg-success/5">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 bg-[var(--success)]/10 rounded-lg flex items-center justify-center shrink-0">
-                  <UserCheck className="w-5 h-5 text-[var(--success)]" aria-hidden />
+                <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center shrink-0">
+                  <UserCheck className="w-5 h-5 text-success" aria-hidden />
                 </div>
                 <div>
                   <h4 className="font-semibold mb-1">Novos Cadastros</h4>
                   <p className="text-sm text-muted-foreground mb-3">
                     {firstTimeDonorsCount} doador(es) aguardando primeira doação
                   </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigate('/donors')}
-                  >
+                  <Button variant="outline" size="sm" onClick={() => navigate('/donors')}>
                     Ver lista
                   </Button>
                 </div>
