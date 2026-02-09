@@ -1,4 +1,6 @@
 using System.Text;
+using System.Text.Json;
+using DoeVida.Api.Contract;
 using DoeVida.Api.Identity;
 using DoeVida.Api.Middlewares;
 using DoeVida.Application.DependencyInjection;
@@ -65,6 +67,34 @@ builder.Services.AddAuthentication(options =>
             ValidAudience = builder.Configuration["Jwt:Audience"] ?? "DoeVida.Web",
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero,
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnChallenge = context =>
+            {
+                context.HandleResponse();
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "application/json";
+                var body = JsonSerializer.Serialize(new ApiErrorResponse
+                {
+                    Type = "Unauthorized",
+                    Message = "Não autorizado. Faça login ou verifique seu token.",
+                    Errors = null,
+                });
+                return context.Response.WriteAsync(body);
+            },
+            OnForbidden = context =>
+            {
+                context.Response.StatusCode = 403;
+                context.Response.ContentType = "application/json";
+                var body = JsonSerializer.Serialize(new ApiErrorResponse
+                {
+                    Type = "Forbidden",
+                    Message = "Acesso negado. Você não tem permissão para este recurso.",
+                    Errors = null,
+                });
+                return context.Response.WriteAsync(body);
+            },
         };
     });
 

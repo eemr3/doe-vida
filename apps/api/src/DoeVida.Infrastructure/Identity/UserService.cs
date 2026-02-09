@@ -98,14 +98,17 @@ public class UserService : IUserService
     .ToListAsync(ct);
 
     var response = new List<GetUsersResponse>();
-    foreach (var item in items)
+    foreach (var user in items)
     {
+      var roles = await _userManager.GetRolesAsync(user);
       response.Add(new GetUsersResponse
       {
-        Page = query.Page,
-        PageSize = query.PageSize,
-        Search = query.Search,
-        Status = query.Status,
+        Id = user.Id,
+        Name = user.Name,
+        Email = user.Email ?? string.Empty,
+        Role = string.Join(", ", roles),
+        IsActive = user.IsActive,
+        CreatedAt = user.CreatedAt,
       });
     }
 

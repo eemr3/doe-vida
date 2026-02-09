@@ -1,6 +1,7 @@
 using DoeVida.Application.UseCases.GetUsers;
 using DoeVida.Application.UseCases.RegisterUser;
 using DoeVida.Application.UseCases.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -8,6 +9,7 @@ namespace DoeVida.Api.Controllers;
 
 [ApiController]
 [Route("api/users")]
+[Authorize(Roles = "Admin")]
 public class UserControllers : ControllerBase
 {
     private readonly ILogger<UserControllers> _logger;

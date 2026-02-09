@@ -32,6 +32,8 @@ public class ExceptionMiddleware
     {
         var (statusCode, type, message, errors) = ex switch
         {
+            UnauthorizedAccessException
+                => (HttpStatusCode.Unauthorized, "Unauthorized", "Não autorizado. Faça login ou verifique seu token.", null),
             InvalidOperationException when ex.Message.Contains("já cadastrado", StringComparison.OrdinalIgnoreCase)
                 => (HttpStatusCode.Conflict, "Conflict", ex.Message, null),
             InvalidOperationException
