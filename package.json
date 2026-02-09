@@ -1,7 +1,7 @@
 {
-  "name": "doesangue",
+  "name": "doevida",
   "private": true,
-  "description": "Monorepo DoeSangue",
+  "description": "Monorepo DoeVida",
   "workspaces": [
     "apps/*"
   ],
