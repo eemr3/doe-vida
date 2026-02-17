@@ -1,6 +1,6 @@
-# DoeSangue
+# DoeVida
 
-Monorepo do projeto DoeSangue (DoeVida) — sistema de doação de sangue.
+Monorepo do projeto DoeVida — sistema de doação de sangue.
 
 ## Estrutura do monorepo
 
