@@ -12,7 +12,7 @@
     "web:dev": "npm run dev -w doevida",
     "web:build": "npm run build -w doevida",
     "web:preview": "npm run preview -w doevida",
-    "api:dev": "dotnet run --project apps/api/src/DoeVida.Api/DoeVida.Api.csproj"
+    "api:dev": "npm run start:dev -w api"
   },
   "engines": {
     "node": ">=18"

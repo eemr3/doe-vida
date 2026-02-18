@@ -7,19 +7,40 @@ Monorepo do projeto DoeSangue (DoeVida) — sistema de doação de sangue.
 ```
 .
 ├── apps/
-│   ├── api/     # API .NET (backend)
-│   └── web/     # Frontend React + Vite
-├── docs/            # Documentação
-├── docker-compose.yml  # PostgreSQL + Redis (dev, portas 5433 e 6380)
+│   ├── api/        # Backend NestJS
+│   └── web/        # Frontend React + Vite
+├── docs/           # Documentação
+├── docker-compose.yml
 ├── package.json    # Raiz — npm workspaces
 └── README.md
+
 ```
 
-## Pré-requisitos
+🧱 Arquitetura da API
 
-- **Node.js** >= 18 (para o frontend)
-- **.NET SDK** (para a API) — [download](https://dotnet.microsoft.com/download)
-- **Docker** e **Docker Compose** (para subir o PostgreSQL em desenvolvimento)
+A API segue arquitetura modular:
+
+```
+src/
+└── modules/
+    └── example/
+        ├── domain/               # Entidades, repositórios (interfaces), exceções
+        ├── application/          # Casos de uso (UseCases)
+        └── infrastructure/       # TypeORM, Controllers, Guards, Strategies
+```
+
+| App     | Tecnologias                                                            |
+| ------- | ---------------------------------------------------------------------- |
+| **api** | NestJS, TypeORM, PostgreSQL, Redis, JWT, Passport, Bcrypt              |
+| **web** | React 18, TypeScript, Vite, React Router, TanStack Query, Tailwind CSS |
+
+📦 Pré-requisitos
+
+Node.js >= 18
+
+Docker
+
+Docker Compose
 
 ## Instalação
 
@@ -34,7 +55,7 @@ npm install
 
 ## Como rodar
 
-### Banco de dados e Redis (Docker Compose)
+🐳 Banco de Dados e Redis (Docker)
 
 Na **raiz do repositório**, suba PostgreSQL e Redis em containers:
 
@@ -49,15 +70,62 @@ docker compose up -d
 | PostgreSQL | **5433**      | 5432         |
 | Redis      | **6380**      | 6379         |
 
-Assim você pode ter outro Postgres/Redis na porta padrão sem conflito. O `appsettings.json` da API já está configurado para `Port=5433`. **Redis** exige senha: padrão `redis-dev-secret` (sobrescreva com `REDIS_PASSWORD` no `.env`). Ao conectar o app ao Redis, use `localhost:6380` e essa senha.
+Isso evita conflito com serviços locais já rodando.
 
-Credenciais do Postgres (batem com o `appsettings.json`): usuário `toch`, senha `supersecretpassword`, database `doevida-db`. Para mudar, copie `.env.example` para `.env` e ajuste.
+🔐 Credenciais padrão (desenvolvimento)
 
-Para aplicar as migrations da API (primeira vez ou após mudanças), na raiz do repo:
+PostgreSQL:
+
+```yml
+Host: localhost
+Port: 5433
+User: toch
+Password: supersecretpassword
+Database: doevida-db
+```
+
+Redis:
+
+```yml
+Host: localhost
+Port: 6380
+Password: redis-dev-secret
+```
+
+Você pode alterar copiando:
 
 ```bash
-cd apps/api && dotnet ef database update --project src/DoeVida.Infrastructure/DoeVida.Infrastructure.csproj --startup-project src/DoeVida.Api/DoeVida.Api.csproj
+cp .env.example .env
 ```
+
+🗄️ Backend (API)
+
+Antes de subir a API, certifique-se que o banco está rodando:
+
+```bash
+cd apps/api
+npm run migration:run
+```
+
+```bash
+npm run seed
+```
+
+Isso criará:
+
+👤 Admin
+
+- Email: admin@admin.com
+
+- Senha: Admin@123
+
+👤 Staff
+
+- Email: staff@staff.com
+
+- Senha: Staff@123
+
+## Rodar API em desenvolvimento
 
 ### Frontend (web)
 
@@ -85,23 +153,37 @@ Na **raiz do repositório**:
 npm run api:dev
 ```
 
-Ou dentro de `apps/api`:
+Ou **dentro de apps/api**:
 
 ```bash
-cd apps/api
-dotnet run --project src/DoeVida.Api/DoeVida.Api.csproj
+npm run start:dev
 ```
 
-Ou abra a solution no Visual Studio / Rider e execute o projeto **DoeVida.Api**.
+A API estará disponível em:
 
-A API usa arquivos de configuração em `src/DoeVida.Api/` (`appsettings.json`, `appsettings.Development.json`). Ajuste connection strings e demais opções conforme o ambiente.
+```arduino
+http://localhost:3001
+```
 
-## Stack
+🔐 Autenticação
 
-| App     | Tecnologias                                                                 |
-| ------- | --------------------------------------------------------------------------- |
-| **api** | .NET, ASP.NET Core, Entity Framework Core, Identity                         |
-| **web** | React 18, TypeScript, Vite, React Router, TanStack Query, Tailwind CSS, Zod |
+A API utiliza:
+
+- JWT
+
+- Passport
+
+- Decorator @CurrentUser()
+
+- Decorator @Roles()
+
+- RolesGuard
+
+Controle de acesso baseado em role:
+
+- ADMIN
+
+- STAFF
 
 ## Documentação
 
