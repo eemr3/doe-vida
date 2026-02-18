@@ -1,5 +1,9 @@
 import { BloodType } from '../../domain/enum/boodtype.enum';
-import { DonationResponseDto } from './donation-response';
+
+interface DonationHistory {
+  dateDonation: Date;
+  location: string;
+}
 
 interface Item {
   id: string;
@@ -11,7 +15,11 @@ interface Item {
   bloodType: BloodType;
   weight: number;
   createdAt: Date;
-  donations?: DonationResponseDto[] | null;
+  age: number;
+  eligible: boolean;
+  lastDonation?: Date | null;
+  registrationDate: Date;
+  donationHistory?: DonationHistory[] | null;
 }
 
 export interface DonorResponseDto {

@@ -19,15 +19,15 @@ export class DonorMapper {
           bloodType: donor.bloodType,
           weight: donor.weight,
           createdAt: donor.createdAt,
-          donations:
-            donations && donations.length > 0
-              ? donations?.map((donation) => ({
-                  id: donation?.id,
-                  donorId: donation?.donorId ?? '',
-                  dateDonation: donation?.dateDonation ?? new Date(),
-                  location: donation?.location,
-                }))
-              : [],
+          age: donor.getAge(),
+          eligible: donor.canDonate(),
+          lastDonation: donations?.[0]?.dateDonation ?? null,
+          registrationDate: donor.createdAt,
+          donationHistory:
+            donations?.map((donation) => ({
+              dateDonation: donation?.dateDonation!,
+              location: donation?.location!,
+            })) ?? null,
         },
       ],
       totalCount: 1,
