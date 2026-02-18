@@ -25,7 +25,10 @@ function mapGetDonorByIdToDonor(data: GetDonorByIdApiResponse): Donor {
     registrationDate: data.registeredAt ?? '',
     eligible: data.eligible,
     nextDonationDate: data.nextDonationDate ?? null,
-    donationHistory: (data.donationHistory ?? []).map((d) => ({ date: d.date, location: d.location })),
+    donationHistory: (data.donationHistory ?? []).map((d) => ({
+      date: d.date,
+      location: d.location,
+    })),
   };
 }
 
@@ -59,8 +62,10 @@ export interface ListDonorsParams {
 
 /** Serviço de doadores. Substituir por chamadas axios quando houver API. */
 export const donorsService = {
-  async list(params: ListDonorsParams = {}): Promise<{ items: Donor[]; totalCount: number }> {
-    const { data } = await apiClient.get<DonorsApiResponse>('/api/donors', {
+  async list(
+    params: ListDonorsParams = {},
+  ): Promise<{ items: Donor[]; totalCount: number }> {
+    const { data } = await apiClient.get<DonorsApiResponse>('/donors', {
       params: {
         page: params.page ?? 1,
         pageSize: params.pageSize ?? 10,
@@ -71,13 +76,12 @@ export const donorsService = {
       },
     });
 
+    console.log(data);
     return {
       items: data.items.map(mapApiItemToDonor),
       totalCount: data.totalCount,
-    }
+    };
   },
-
-
 
   async getById(id: string): Promise<Donor | null> {
     try {

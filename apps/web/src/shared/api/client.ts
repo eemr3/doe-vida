@@ -2,6 +2,8 @@ import axios from 'axios';
 
 const baseURL = import.meta.env.VITE_API_URL ?? 'http://localhost:5192';
 
+const prefixApi = import.meta.env.VITE_PRE_FIX_API ?? 'api';
+
 let authToken: string | null = null;
 let onUnauthorized: (() => void) | null = null;
 
@@ -14,8 +16,9 @@ export function setOnUnauthorized(callback: (() => void) | null) {
   onUnauthorized = callback;
 }
 
+console.log(`${baseURL}/${prefixApi}`);
 export const apiClient = axios.create({
-  baseURL,
+  baseURL: `${baseURL}/${prefixApi}`,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -23,7 +26,7 @@ export const apiClient = axios.create({
 
 apiClient.interceptors.request.use((config) => {
   // Login não deve enviar token (evita 401 por token expirado/inválido)
-  if (config.url?.includes('/api/auth/login')) {
+  if (config.url?.includes(`/${prefixApi}/auth/login`)) {
     return config;
   }
   if (authToken) {
@@ -40,5 +43,5 @@ apiClient.interceptors.response.use(
       onUnauthorized?.();
     }
     return Promise.reject(error);
-  }
+  },
 );

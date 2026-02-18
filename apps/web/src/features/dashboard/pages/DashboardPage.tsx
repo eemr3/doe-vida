@@ -39,7 +39,25 @@ const CHART_COLORS = [
   '#FEE2E2',
   '#FFF1F2',
 ];
-
+// {
+//   "id": "56df0e72-dbf4-4fad-a184-4ec51a47cbad",
+//   "name": "Emersaon Moreira",
+//   "email": "eemr3@yahoo.com.br",
+//   "phone": "61998673265",
+//   "dateOfBirth": "1976-07-26T00:00:00.000Z",
+//   "city": "Anápolis-GO",
+//   "bloodType": 0,
+//   "weight": "70.80",
+//   "createdAt": "2026-02-18T04:30:56.528Z",
+//   "donations": [
+//       {
+//           "id": "e3fe4c45-ab84-449a-9c41-0ede015a022c",
+//           "donorId": "56df0e72-dbf4-4fad-a184-4ec51a47cbad",
+//           "dateDonation": "2025-05-15T00:00:00.000Z",
+//           "location": "Emocentro de Anápolis - GO"
+//       }
+//   ]
+// }
 export function DashboardPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -75,6 +93,7 @@ export function DashboardPage() {
     };
   }, []);
 
+  console.log(donors);
   if (loading && donors.length === 0) {
     return (
       <PageLayout>

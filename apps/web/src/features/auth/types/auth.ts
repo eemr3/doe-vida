@@ -1,6 +1,6 @@
 /** Resposta do POST /api/auth/login */
 export interface AuthLoginApiResponse {
-  token: string;
+  access_token: string;
   expiresAt: string;
   user: AuthUserApi;
 }

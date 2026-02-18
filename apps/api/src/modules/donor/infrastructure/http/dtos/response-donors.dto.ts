@@ -1,5 +1,5 @@
-import { BloodType } from '../../domain/enum/boodtype.enum';
-import { DonationResponseDto } from './donation-response';
+import { DonationResponseDto } from '../../../application/dtos/donation-response';
+import { BloodType } from '../../../domain/enum/boodtype.enum';
 
 interface Item {
   id: string;
@@ -11,10 +11,10 @@ interface Item {
   bloodType: BloodType;
   weight: number;
   createdAt: Date;
-  donations?: DonationResponseDto[] | null;
+  donations: DonationResponseDto[];
 }
 
-export interface DonorResponseDto {
+export interface ResponseDonorsDto {
   items: Item[];
   totalCount: number;
 }

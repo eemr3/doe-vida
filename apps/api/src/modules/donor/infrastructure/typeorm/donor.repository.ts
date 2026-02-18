@@ -5,6 +5,7 @@ import { IDonorRepository } from '../../domain/repositories/donor.repository';
 import { DonorOrmEntity } from './donor.orm-entity';
 import { randomUUID } from 'crypto';
 import { Injectable } from '@nestjs/common';
+import { ResponseDonorsDto } from '../http/dtos/response-donors.dto';
 
 @Injectable()
 export class TypeOrmDonorRepository implements IDonorRepository {
@@ -62,9 +63,9 @@ export class TypeOrmDonorRepository implements IDonorRepository {
       : null;
   }
 
-  async findAll(): Promise<DonorEntity[]> {
+  async findAll(): Promise<ResponseDonorsDto> {
     const entities = await this.donorRepo.find({ relations: ['donations'] });
-    return entities.map(
+    const result = entities.map(
       (entity) =>
         new DonorEntity(
           entity.id,
@@ -79,6 +80,27 @@ export class TypeOrmDonorRepository implements IDonorRepository {
           entity.donations,
         ),
     );
+    return {
+      items: result.map((entity) => ({
+        id: entity.id,
+        name: entity.name,
+        email: entity.email,
+        phone: entity.phone,
+        dateOfBirth: entity.dateOfBirth,
+        city: entity.city,
+        bloodType: entity.bloodType,
+        weight: entity.weight,
+        createdAt: entity.createdAt,
+        donations:
+          entity.donations?.map((donation) => ({
+            id: donation.id,
+            donorId: donation.donorId,
+            dateDonation: donation.dateDonation,
+            location: donation.location,
+          })) ?? [],
+      })),
+      totalCount: result.length,
+    };
   }
 
   async update(donor: DonorEntity): Promise<DonorEntity> {
