@@ -1,5 +1,6 @@
 import { BadRequestError } from '../../../../shared/exceptions/badrequest.error';
 import { BloodType } from '../enum/boodtype.enum';
+import { DonationEntity } from './donation.entiry';
 
 export class DonorEntity {
   constructor(
@@ -12,6 +13,7 @@ export class DonorEntity {
     public bloodType: BloodType,
     public weight: number,
     public readonly createdAt: Date,
+    public donations?: DonationEntity[],
   ) {
     if (DonorEntity.calculateAge(this.dateOfBirth) < 16)
       throw new BadRequestError('Donor must be at least 16 years old');

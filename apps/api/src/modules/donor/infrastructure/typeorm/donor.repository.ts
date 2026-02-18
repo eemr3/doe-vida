@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 import { DonorEntity } from '../../domain/entities/donor.entity';
 import { IDonorRepository } from '../../domain/repositories/donor.repository';
 import { DonorOrmEntity } from './donor.orm-entity';
@@ -63,7 +63,7 @@ export class TypeOrmDonorRepository implements IDonorRepository {
   }
 
   async findAll(): Promise<DonorEntity[]> {
-    const entities = await this.donorRepo.find();
+    const entities = await this.donorRepo.find({ relations: ['donations'] });
     return entities.map(
       (entity) =>
         new DonorEntity(
@@ -76,6 +76,7 @@ export class TypeOrmDonorRepository implements IDonorRepository {
           entity.bloodType,
           entity.weight,
           entity.createdAt,
+          entity.donations,
         ),
     );
   }

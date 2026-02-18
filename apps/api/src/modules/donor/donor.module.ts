@@ -8,12 +8,17 @@ import { DONOR_REPOSITORY } from './domain/repositories/donor.repository';
 import { TypeOrmDonorRepository } from './infrastructure/typeorm/donor.repository';
 import { DONATION_REPOSITORY } from './domain/repositories/donation.repository';
 import { TypeOrmDonationRepository } from './infrastructure/typeorm/donation.repository';
+import { GetAllDonorUseCase } from './application/use-cases/get-all-donor.use-case';
+import { DonationController } from './infrastructure/http/donation.controller';
+import { AddDonationUseCase } from './application/use-cases/add-donation.use-case';
 
 @Module({
   imports: [TypeOrmModule.forFeature([DonorOrmEntity, DonationOrmEntity])],
-  controllers: [DonorController],
+  controllers: [DonorController, DonationController],
   providers: [
     RegisterDonorUseCase,
+    GetAllDonorUseCase,
+    AddDonationUseCase,
     {
       provide: DONOR_REPOSITORY,
       useClass: TypeOrmDonorRepository,
