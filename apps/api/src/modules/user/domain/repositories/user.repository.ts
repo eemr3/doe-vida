@@ -1,5 +1,5 @@
-import { RoleEntity } from "../entities/role.entiry";
-import { UserEntity } from "../entities/user.entity";
+import { RoleEntity } from '../entities/role.entiry';
+import { UserEntity } from '../entities/user.entity';
 
 export const USER_REPOSITORY = 'USER_REPOSITORY';
 

@@ -4,7 +4,7 @@ import { randomUUID } from 'crypto';
 import {
   IUserRepository,
   USER_REPOSITORY,
-} from '../../domain/repository/user.repository';
+} from '../../domain/repositories/user.repository';
 import { ConflictError } from '../../../../shared/exceptions/conflict.error';
 import { RoleEntity } from '../../domain/entities/role.entiry';
 import { UserEntity } from '../../domain/entities/user.entity';

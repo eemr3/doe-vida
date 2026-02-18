@@ -2,7 +2,7 @@ import { Inject } from '@nestjs/common';
 import {
   IUserRepository,
   USER_REPOSITORY,
-} from '../../../user/domain/repository/user.repository';
+} from '../../../user/domain/repositories/user.repository';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UnauthorizedError } from '../../../../shared/exceptions/unauthorized.error';

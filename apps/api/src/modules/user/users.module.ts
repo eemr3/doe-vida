@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserController } from './infrastructure/http/users.controller';
 import { UserOrmEntity } from './infrastructure/typeorm/user.orm-entity';
 import { TypeOrmUserRepository } from './infrastructure/typeorm/user.repository';
-import { USER_REPOSITORY } from './domain/repository/user.repository';
+import { USER_REPOSITORY } from './domain/repositories/user.repository';
 import { CreateUserUseCase } from './application/use-cases/create-user.use-case';
 import { FindByEmailUseCase } from './application/use-cases/find-by-email.use-case';
 import { RoleOrmEntity } from './infrastructure/typeorm/role.orm-entity';

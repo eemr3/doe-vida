@@ -3,7 +3,7 @@ import { UserEntity } from '../../domain/entities/user.entity';
 import {
   IUserRepository,
   USER_REPOSITORY,
-} from '../../domain/repository/user.repository';
+} from '../../domain/repositories/user.repository';
 
 export class FindByEmailUseCase {
   constructor(
