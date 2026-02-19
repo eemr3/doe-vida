@@ -6,6 +6,8 @@ import { DonorOrmEntity } from './donor.orm-entity';
 import { randomUUID } from 'crypto';
 import { Injectable } from '@nestjs/common';
 import { ResponseDonorsDto } from '../http/dtos/response-donors.dto';
+import { DonationOrmEntity } from './donation.orm-entity';
+import { DonationEntity } from '../../domain/entities/donation.entiry';
 
 @Injectable()
 export class TypeOrmDonorRepository implements IDonorRepository {
@@ -30,7 +32,10 @@ export class TypeOrmDonorRepository implements IDonorRepository {
   }
 
   async findById(id: string): Promise<DonorEntity | null> {
-    const entity = await this.donorRepo.findOne({ where: { id } });
+    const entity = await this.donorRepo.findOne({
+      where: { id },
+      relations: ['donations'],
+    });
     return entity
       ? new DonorEntity(
           entity.id,
@@ -42,6 +47,17 @@ export class TypeOrmDonorRepository implements IDonorRepository {
           entity.bloodType,
           entity.weight,
           entity.createdAt,
+          entity.donations?.map(
+            (donation) =>
+              new DonationEntity(
+                donation.id,
+                donation.donorId,
+                donation.dateDonation
+                  ? new Date(donation.dateDonation)
+                  : undefined,
+                donation.location,
+              ),
+          ),
         )
       : null;
   }

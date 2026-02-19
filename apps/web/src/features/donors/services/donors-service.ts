@@ -85,7 +85,7 @@ export const donorsService = {
 
   async getById(id: string): Promise<Donor | null> {
     try {
-      const { data } = await apiClient.get<GetDonorByIdApiResponse>(`/api/donors/${id}`);
+      const { data } = await apiClient.get<GetDonorByIdApiResponse>(`/donors/${id}`);
       return mapGetDonorByIdToDonor(data);
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.status === 404) return null;
