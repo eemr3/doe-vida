@@ -4,11 +4,7 @@ import { Button } from '@/shared/ui/atoms/Button';
 import { Card } from '@/shared/ui/atoms/Card';
 import { PageLayout } from '@/shared/ui/templates/PageLayout';
 import { Pagination } from '@/shared/ui/molecules/Pagination';
-import {
-  DonorsListFilters,
-  DonorsTable,
-  DonorsListStats,
-} from '../components/organisms';
+import { DonorsListFilters, DonorsTable, DonorsListStats } from '../components/organisms';
 import { useDonors } from '../hooks';
 
 function formatDate(dateString: string | null): string {
@@ -173,6 +169,7 @@ export function DonorsListPage() {
             <DonorsTable
               donors={paginatedDonors}
               onViewDonor={(id) => navigate(`/donors/${id}`)}
+              onRegisterDonation={(id) => navigate(`/donors/${id}/register-donation`)}
               formatDate={formatDate}
             />
             {totalPages > 1 && (

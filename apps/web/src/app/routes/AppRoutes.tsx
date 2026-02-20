@@ -7,6 +7,7 @@ import {
   RegisterDonorPage,
   DonorsListPage,
   DonorDetailsPage,
+  RegisterDonationPage,
 } from '@/features/donors/pages';
 import { DashboardPage } from '@/features/dashboard/pages';
 import { UsersListPage, RegisterUserPage } from '@/features/users/pages';
@@ -181,6 +182,14 @@ export function AppRoutes() {
             <RequireAdmin>
               <RegisterUserPage />
             </RequireAdmin>
+          }
+        />
+        <Route
+          path="/donors/:id/register-donation"
+          element={
+            <RequireAuth>
+              <RegisterDonationPage />
+            </RequireAuth>
           }
         />
         <Route path="*" element={<Navigate to="/" replace />} />

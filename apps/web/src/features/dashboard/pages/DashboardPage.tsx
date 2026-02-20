@@ -93,7 +93,6 @@ export function DashboardPage() {
     };
   }, []);
 
-  console.log(donors);
   if (loading && donors.length === 0) {
     return (
       <PageLayout>

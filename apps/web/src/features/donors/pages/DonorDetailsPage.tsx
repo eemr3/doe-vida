@@ -1,23 +1,22 @@
-import {
-  ArrowLeft,
-  Mail,
-  Phone,
-  MapPin,
-  Calendar,
-  Droplet,
-  Activity,
-  Edit,
-  CheckCircle,
-  AlertCircle,
-  Clock,
-} from 'lucide-react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Badge } from '@/shared/ui/atoms/Badge';
 import { Button } from '@/shared/ui/atoms/Button';
 import { Card } from '@/shared/ui/atoms/Card';
-import { Badge } from '@/shared/ui/atoms/Badge';
-import { CardHeader } from '@/shared/ui/molecules/CardHeader';
 import { CardContent } from '@/shared/ui/molecules/CardContent';
+import { CardHeader } from '@/shared/ui/molecules/CardHeader';
 import { PageLayout } from '@/shared/ui/templates/PageLayout';
+import {
+  Activity,
+  AlertCircle,
+  ArrowLeft,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Droplet,
+  Mail,
+  MapPin,
+  Phone,
+} from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useDonorById } from '../hooks';
 
 function formatDateLong(dateString: string | null): string {
@@ -146,9 +145,12 @@ export function DonorDetailsPage() {
                 </Badge>
               </div>
             </div>
-            <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-              <Edit className="w-4 h-4" aria-hidden />
-              Editar
+            <Button
+              variant="outline"
+              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+            >
+              <Droplet className="w-4 h-4" aria-hidden />
+              Registrar Doação
             </Button>
           </div>
         </div>
@@ -312,10 +314,7 @@ export function DonorDetailsPage() {
 
             <Card padding="md" className="bg-info/10 border-info">
               <div className="flex items-start gap-3">
-                <AlertCircle
-                  className="w-5 h-5 text-info shrink-0 mt-0.5"
-                  aria-hidden
-                />
+                <AlertCircle className="w-5 h-5 text-info shrink-0 mt-0.5" aria-hidden />
                 <div>
                   <h4 className="font-semibold text-sm mb-1">Intervalo entre doações</h4>
                   <p className="text-sm text-muted-foreground">

@@ -1,19 +1,21 @@
-import type { ReactNode } from 'react';
-import { Eye, Edit } from 'lucide-react';
 import { Badge } from '@/shared/ui/atoms/Badge';
 import {
   Table,
-  TableHeader,
   TableBody,
-  TableRow,
-  TableHead,
   TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/shared/ui/atoms/Table';
+import { Droplet, Eye } from 'lucide-react';
+import type { ReactNode } from 'react';
 import type { Donor } from '../../types';
+import { useNavigate } from 'react-router-dom';
 
 export interface DonorsTableProps {
   donors: Donor[];
   onViewDonor: (id: string) => void;
+  onRegisterDonation: (id: string) => void;
   formatDate: (dateString: string | null) => string;
   emptyState?: ReactNode;
 }
@@ -31,6 +33,8 @@ export function DonorsTable({
   if (donors.length === 0) {
     return null;
   }
+
+  const navigate = useNavigate();
 
   return (
     <div className="overflow-x-auto">
@@ -84,10 +88,11 @@ export function DonorsTable({
                   <button
                     type="button"
                     className="p-2 rounded-lg hover:bg-accent transition-colors"
-                    title="Editar"
-                    aria-label={`Editar ${donor.name}`}
+                    title="Registrar Doação"
+                    aria-label={`Registrar Doação de ${donor.name}`}
+                    onClick={() => navigate(`/donors/${donor.id}/register-donation`)}
                   >
-                    <Edit className="w-4 h-4" aria-hidden />
+                    <Droplet className="w-4 h-4 text-primary" aria-hidden />
                   </button>
                 </div>
               </TableCell>

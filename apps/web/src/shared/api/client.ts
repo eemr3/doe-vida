@@ -16,7 +16,6 @@ export function setOnUnauthorized(callback: (() => void) | null) {
   onUnauthorized = callback;
 }
 
-console.log(`${baseURL}/${prefixApi}`);
 export const apiClient = axios.create({
   baseURL: `${baseURL}/${prefixApi}`,
   headers: {
