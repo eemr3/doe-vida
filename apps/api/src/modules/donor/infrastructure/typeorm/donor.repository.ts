@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityManager, EntityRepository, Repository } from 'typeorm';
 import { DonorEntity } from '../../domain/entities/donor.entity';
 import { IDonorRepository } from '../../domain/repositories/donor.repository';
 import { DonorOrmEntity } from './donor.orm-entity';
@@ -16,25 +16,27 @@ export class TypeOrmDonorRepository implements IDonorRepository {
     private readonly donorRepo: Repository<DonorOrmEntity>,
   ) {}
 
-  async create(donor: DonorEntity): Promise<DonorEntity> {
-    const ormDonor = new DonorOrmEntity();
-    ormDonor.id = randomUUID();
-    ormDonor.name = donor.name;
-    ormDonor.email = donor.email;
-    ormDonor.phone = donor.phone;
-    ormDonor.dateOfBirth = donor.dateOfBirth;
-    ormDonor.city = donor.city;
-    ormDonor.bloodType = donor.bloodType;
-    ormDonor.weight = donor.weight;
+  async save(
+    donor: DonorEntity,
+    manager?: EntityManager,
+  ): Promise<DonorEntity> {
+    const repo = manager
+      ? manager.getRepository(DonorOrmEntity)
+      : this.donorRepo;
 
-    await this.donorRepo.save(ormDonor);
-    return donor;
+    const saved = await repo.save(donor);
+    return saved;
   }
 
   async findById(id: string): Promise<DonorEntity | null> {
     const entity = await this.donorRepo.findOne({
       where: { id },
       relations: ['donations'],
+      order: {
+        donations: {
+          dateDonation: 'DESC',
+        },
+      },
     });
     return entity
       ? new DonorEntity(
@@ -43,6 +45,7 @@ export class TypeOrmDonorRepository implements IDonorRepository {
           entity.email,
           entity.phone,
           entity.dateOfBirth,
+          entity.gender,
           entity.city,
           entity.bloodType,
           entity.weight,
@@ -71,6 +74,7 @@ export class TypeOrmDonorRepository implements IDonorRepository {
           entity.email,
           entity.phone,
           entity.dateOfBirth,
+          entity.gender,
           entity.city,
           entity.bloodType,
           entity.weight,
@@ -89,6 +93,7 @@ export class TypeOrmDonorRepository implements IDonorRepository {
           entity.email,
           entity.phone,
           entity.dateOfBirth,
+          entity.gender,
           entity.city,
           entity.bloodType,
           entity.weight,
@@ -103,6 +108,7 @@ export class TypeOrmDonorRepository implements IDonorRepository {
         email: entity.email,
         phone: entity.phone,
         dateOfBirth: entity.dateOfBirth,
+        gender: entity.gender,
         city: entity.city,
         bloodType: entity.bloodType,
         weight: entity.weight,

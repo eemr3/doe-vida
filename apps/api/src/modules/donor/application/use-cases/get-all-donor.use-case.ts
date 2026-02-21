@@ -21,6 +21,7 @@ export class GetAllDonorUseCase {
         donor.email,
         donor.phone,
         donor.dateOfBirth,
+        donor.gender,
         donor.city,
         donor.bloodType,
         donor.weight,

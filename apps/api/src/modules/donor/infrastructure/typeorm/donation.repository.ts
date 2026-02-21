@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DonationEntity } from '../../domain/entities/donation.entiry';
 import { IDonationRepository } from '../../domain/repositories/donation.repository';
 import { DonationOrmEntity } from './donation.orm-entity';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { randomUUID } from 'crypto';
 import { Injectable } from '@nestjs/common';
 
@@ -13,15 +13,22 @@ export class TypeOrmDonationRepository implements IDonationRepository {
     private readonly donationRepo: Repository<DonationOrmEntity>,
   ) {}
 
-  async create(donation: DonationEntity): Promise<DonationEntity> {
-    const ormDonation = new DonationOrmEntity();
-    ormDonation.id = randomUUID();
-    ormDonation.donorId = donation.donorId;
-    ormDonation.dateDonation = donation.dateDonation;
-    ormDonation.location = donation.location;
+  async create(
+    donation: DonationEntity,
+    manager?: EntityManager,
+  ): Promise<DonationEntity> {
+    console.log('create donation', donation);
+    const repo = manager
+      ? manager.getRepository(DonationOrmEntity)
+      : this.donationRepo;
 
-    await this.donationRepo.save(ormDonation);
-    return donation;
+    const saved = await repo.save(donation);
+    return new DonationEntity(
+      saved.id,
+      saved.donorId,
+      saved.dateDonation,
+      saved.location,
+    );
   }
 
   async findById(id: string): Promise<DonationEntity | null> {

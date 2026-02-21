@@ -2,7 +2,11 @@ import { useState, useEffect } from 'react';
 import type { Donor } from '../types';
 import { donorsService } from '../services';
 
-export function useDonorById(id: string): { donor: Donor | null; loading: boolean; error: Error | null } {
+export function useDonorById(id: string): {
+  donor: Donor | null;
+  loading: boolean;
+  error: Error | null;
+} {
   const [donor, setDonor] = useState<Donor | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -32,5 +36,6 @@ export function useDonorById(id: string): { donor: Donor | null; loading: boolea
     };
   }, [id]);
 
+  console.log(donor);
   return { donor, loading, error };
 }

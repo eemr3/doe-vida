@@ -12,6 +12,10 @@ import { GetAllDonorUseCase } from './application/use-cases/get-all-donor.use-ca
 import { DonationController } from './infrastructure/http/donation.controller';
 import { AddDonationUseCase } from './application/use-cases/add-donation.use-case';
 import { GetDonorByIdUseCase } from './application/use-cases/get-donor-by-id.use-case';
+import {
+  TRANSACTIONS_SERVICE,
+  TransactionsService,
+} from '../../shared/transaction/transactions.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([DonorOrmEntity, DonationOrmEntity])],
@@ -28,6 +32,10 @@ import { GetDonorByIdUseCase } from './application/use-cases/get-donor-by-id.use
     {
       provide: DONATION_REPOSITORY,
       useClass: TypeOrmDonationRepository,
+    },
+    {
+      provide: TRANSACTIONS_SERVICE,
+      useClass: TransactionsService,
     },
   ],
 })

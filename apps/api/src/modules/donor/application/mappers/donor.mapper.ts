@@ -37,12 +37,14 @@ export class DonorMapper {
     donor: DonorEntity,
     donations?: DonationEntity[],
   ): DonorByIdResponseDto {
+    console.log(donor.canDonate());
     return {
       id: donor.id,
       name: donor.name,
       email: donor.email,
       phone: donor.phone,
       dateOfBirth: donor.dateOfBirth,
+      gender: donor.gender,
       city: donor.city,
       bloodType: donor.bloodType,
       weight: donor.weight,
@@ -50,6 +52,9 @@ export class DonorMapper {
       age: donor.getAge(),
       eligible: donor.canDonate(),
       lastDonation: donations?.[0]?.dateDonation ?? null,
+      nextDonationDate: donations?.[0]?.dateDonation
+        ? donor.getNextDonationDate(donations?.[0]?.dateDonation)
+        : null,
       registrationDate: donor.createdAt,
       donationHistory:
         donations?.map((donation) => ({

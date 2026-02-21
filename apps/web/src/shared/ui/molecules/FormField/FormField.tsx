@@ -12,8 +12,7 @@ export interface FormFieldProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
   ({ label, error, success, id, className, ...props }, ref) => {
-    const inputId =
-      id ?? `input-${Math.random().toString(36).substring(2, 11)}`;
+    const inputId = id ?? `input-${Math.random().toString(36).substring(2, 11)}`;
 
     return (
       <div className="w-full">
@@ -29,8 +28,8 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
           aria-describedby={error ? `${inputId}-error` : undefined}
           className={cn(
             error && 'border-destructive focus:ring-destructive',
-            success && !error && 'border-[var(--success)] focus:ring-[var(--success)]',
-            className
+            success && !error && 'border-success focus:ring-success',
+            className,
           )}
           {...props}
         />
@@ -45,7 +44,7 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 FormField.displayName = 'FormField';

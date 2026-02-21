@@ -1,5 +1,6 @@
 import { DonationResponseDto } from '../../../application/dtos/donation-response';
 import { BloodType } from '../../../domain/enum/boodtype.enum';
+import { GenderType } from '../../../domain/enum/Gender-type.enum';
 
 interface Item {
   id: string;
@@ -7,6 +8,7 @@ interface Item {
   email: string;
   phone: string;
   dateOfBirth: Date;
+  gender: GenderType;
   city: string;
   bloodType: BloodType;
   weight: number;

@@ -21,12 +21,12 @@ function mapGetDonorByIdToDonor(data: GetDonorByIdApiResponse): Donor {
     age: data.age,
     weight: data.weight,
     city: data.city,
-    lastDonation: data.lastDonation ?? null,
+    lastDonation: data.lastDonation ?? '',
     registrationDate: data.registeredAt ?? '',
     eligible: data.eligible,
     nextDonationDate: data.nextDonationDate ?? null,
     donationHistory: (data.donationHistory ?? []).map((d) => ({
-      date: d.date,
+      dateDonation: d.dateDonation,
       location: d.location,
     })),
   };
@@ -43,7 +43,9 @@ function mapApiItemToDonor(item: DonorsApiItem): Donor {
     age: item.age,
     weight: item.weight,
     city: item.city,
-    lastDonation: item.lastDonation ?? null,
+    lastDonation: item.lastDonation
+      ? new Date(item.lastDonation).toISOString()
+      : undefined,
     registrationDate: item.registeredAt ?? '',
     eligible: item.eligible,
     nextDonationDate: null,
@@ -85,6 +87,7 @@ export const donorsService = {
   async getById(id: string): Promise<Donor | null> {
     try {
       const { data } = await apiClient.get<GetDonorByIdApiResponse>(`/donors/${id}`);
+      console.log('data getById', data);
       return mapGetDonorByIdToDonor(data);
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.status === 404) return null;
@@ -93,22 +96,24 @@ export const donorsService = {
   },
 
   async register(formData: DonorFormData): Promise<{ id: string }> {
+    console.log('formData', formData);
     const body: RegisterDonorApiRequest = {
       name: formData.name.trim(),
       email: formData.email.trim(),
       phone: formData.phone.trim(),
       dateOfBirth: new Date(formData.birthDate).toISOString(),
+      gender: formData.gender.trim(),
       city: formData.city.trim(),
       bloodType: bloodTypeToApi(formData.bloodType),
       weight: parseFloat(formData.weight),
     };
-    if (formData.lastDonation?.trim()) {
-      body.dateOfLastDonation = new Date(formData.lastDonation.trim()).toISOString();
+    if (formData.lastDonationDate?.trim()) {
+      body.lastDonationDate = new Date(formData.lastDonationDate.trim()).toISOString();
       if (formData.lastDonationLocation?.trim()) {
         body.lastDonationLocation = formData.lastDonationLocation.trim();
       }
     }
-    const { data } = await apiClient.post<RegisterDonorApiResponse>('/api/donors', body);
+    const { data } = await apiClient.post<RegisterDonorApiResponse>('/donors', body);
     return { id: data.id };
   },
 };

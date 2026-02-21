@@ -23,6 +23,11 @@ const BLOOD_TYPE_OPTIONS = [
   { value: 'O-', label: 'O-' },
 ];
 
+const GENDER_OPTIONS = [
+  { value: 'male', label: 'Masculino' },
+  { value: 'female', label: 'Feminino' },
+];
+
 function calculateAge(birthDate: string): number {
   const today = new Date();
   const birth = new Date(birthDate);
@@ -44,9 +49,10 @@ const initialFormData: DonorFormData = {
   phone: '',
   bloodType: '',
   birthDate: '',
+  gender: 'male',
   weight: '',
   city: '',
-  lastDonation: '',
+  lastDonationDate: '',
   lastDonationLocation: '',
 };
 
@@ -148,9 +154,7 @@ export function RegisterDonorPage({ onRegister }: RegisterDonorPageProps) {
         <Card padding="lg">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-primary">
-                Dados Pessoais
-              </h3>
+              <h3 className="text-lg font-semibold mb-4 text-primary">Dados Pessoais</h3>
               <div className="space-y-4">
                 <FormField
                   label="Nome Completo *"
@@ -190,15 +194,22 @@ export function RegisterDonorPage({ onRegister }: RegisterDonorPageProps) {
                     success={!errors.birthDate && formData.birthDate.length > 0}
                     max={maxDate}
                   />
-                  <FormField
-                    label="Cidade *"
-                    placeholder="Sua cidade"
-                    value={formData.city}
-                    onChange={(e) => handleChange('city', e.target.value)}
-                    error={errors.city}
-                    success={!errors.city && formData.city.length > 0}
+                  <SelectField
+                    label="Sexo *"
+                    options={GENDER_OPTIONS}
+                    value={formData.gender}
+                    onChange={(e) => handleChange('gender', e.target.value)}
+                    error={errors.gender}
                   />
                 </div>
+                <FormField
+                  label="Cidade *"
+                  placeholder="Sua cidade"
+                  value={formData.city}
+                  onChange={(e) => handleChange('city', e.target.value)}
+                  error={errors.city}
+                  success={!errors.city && formData.city.length > 0}
+                />
               </div>
             </div>
 
@@ -230,8 +241,8 @@ export function RegisterDonorPage({ onRegister }: RegisterDonorPageProps) {
                 <FormField
                   label="Data da Última Doação (opcional)"
                   type="date"
-                  value={formData.lastDonation}
-                  onChange={(e) => handleChange('lastDonation', e.target.value)}
+                  value={formData.lastDonationDate ?? ''}
+                  onChange={(e) => handleChange('lastDonationDate', e.target.value)}
                   max={maxDate}
                 />
                 <FormField

@@ -1,5 +1,5 @@
 export interface DonationRecord {
-  date: string;
+  dateDonation: string;
   location: string;
 }
 
@@ -14,7 +14,7 @@ export interface Donor {
   age?: number;
   weight: number;
   city: string;
-  lastDonation: string | null;
+  lastDonation?: string;
   registrationDate: string;
   eligible: boolean;
   nextDonationDate: string | null;
@@ -28,11 +28,12 @@ export interface DonorFormData {
   phone: string;
   bloodType: string;
   birthDate: string;
+  gender: string;
   weight: string;
   city: string;
-  lastDonation: string;
+  lastDonationDate?: string;
   /** Local da última doação (opcional). Usado quando lastDonation é informada. */
-  lastDonationLocation: string;
+  lastDonationLocation?: string;
 }
 
 export interface DonorsApiItem {
@@ -46,7 +47,7 @@ export interface DonorsApiItem {
   weight: number;
   eligible: boolean;
   /** Data da última doação (ISO). Null se nunca doou. */
-  lastDonation?: string | null;
+  lastDonation?: Date | null;
   /** Data de cadastro (ISO). */
   registeredAt?: string;
 }
@@ -62,11 +63,12 @@ export interface RegisterDonorApiRequest {
   email: string;
   phone: string;
   dateOfBirth: string; // ISO
+  gender: string;
   city: string;
   bloodType: number;
   weight: number;
   /** Opcional. Data da última doação (ISO). Quando informada, a API cria um registro em Donations. */
-  dateOfLastDonation?: string;
+  lastDonationDate?: string;
   /** Opcional. Local da última doação. */
   lastDonationLocation?: string;
 }
@@ -87,7 +89,7 @@ export interface GetDonorByIdApiResponse {
   weight: number;
   eligible: boolean;
   registeredAt: string; // ISO
-  lastDonation: string | null; // ISO
+  lastDonation: string; // ISO
   nextDonationDate: string | null; // ISO
-  donationHistory: { date: string; location: string }[];
+  donationHistory: { dateDonation: string; location: string }[];
 }

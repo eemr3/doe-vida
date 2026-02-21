@@ -67,7 +67,7 @@ export function DonorsTable({
               </TableCell>
               <TableCell className="hidden md:table-cell">{donor.city}</TableCell>
               <TableCell className="hidden lg:table-cell">
-                {formatDate(donor.lastDonation)}
+                {formatDate(donor.lastDonation ?? null)}
               </TableCell>
               <TableCell>
                 <Badge variant={donor.eligible ? 'success' : 'warning'}>

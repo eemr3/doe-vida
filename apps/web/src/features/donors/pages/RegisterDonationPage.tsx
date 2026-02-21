@@ -23,6 +23,19 @@ const LOCATION_OPTIONS = [
   { value: 'Hemocentro Belo Horizonte', label: 'Hemocentro Belo Horizonte' },
   { value: 'Hemocentro Curitiba', label: 'Hemocentro Curitiba' },
   { value: 'Hemocentro Porto Alegre', label: 'Hemocentro Porto Alegre' },
+  { value: 'Hemocentro Brasília', label: 'Hemocentro Brasília' },
+  { value: 'Hemocentro Goiânia', label: 'Hemocentro Goiânia' },
+  { value: 'Hemocentro São Luís', label: 'Hemocentro São Luís' },
+  { value: 'Hemocentro Cuiabá', label: 'Hemocentro Cuiabá' },
+  { value: 'Hemocentro Campo Grande', label: 'Hemocentro Campo Grande' },
+  { value: 'Hemocentro Caxias do Sul', label: 'Hemocentro Caxias do Sul' },
+  { value: 'Hemocentro Recife', label: 'Hemocentro Recife' },
+  { value: 'Hemocentro João Pessoa', label: 'Hemocentro João Pessoa' },
+  { value: 'Hemocentro Aracaju', label: 'Hemocentro Aracaju' },
+  { value: 'Hemocentro Maceió', label: 'Hemocentro Maceió' },
+  { value: 'Hemocentro Teresina', label: 'Hemocentro Teresina' },
+  { value: 'Hemocentro João Pessoa', label: 'Hemocentro João Pessoa' },
+  { value: 'Hemocentro João Pessoa', label: 'Hemocentro João Pessoa' },
 ];
 export function RegisterDonationPage() {
   const { id } = useParams<{ id: string }>();

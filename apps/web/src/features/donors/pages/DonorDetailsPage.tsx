@@ -21,7 +21,16 @@ import { useDonorById } from '../hooks';
 
 function formatDateLong(dateString: string | null): string {
   if (!dateString) return 'Não informado';
-  return new Date(dateString).toLocaleDateString('pt-BR', {
+
+  const date = new Date(dateString);
+
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth();
+  const day = date.getUTCDate();
+
+  const localDate = new Date(year, month, day);
+
+  return localDate.toLocaleDateString('pt-BR', {
     day: '2-digit',
     month: 'long',
     year: 'numeric',
@@ -81,9 +90,23 @@ export function DonorDetailsPage() {
 
   const getDaysSinceLastDonation = (): number | null => {
     if (!donor.lastDonation) return null;
+
     const last = new Date(donor.lastDonation);
     const today = new Date();
-    return Math.ceil(Math.abs(today.getTime() - last.getTime()) / (1000 * 60 * 60 * 24));
+
+    const lastUTC = Date.UTC(
+      last.getUTCFullYear(),
+      last.getUTCMonth(),
+      last.getUTCDate(),
+    );
+
+    const todayUTC = Date.UTC(
+      today.getUTCFullYear(),
+      today.getUTCMonth(),
+      today.getUTCDate(),
+    );
+
+    return Math.floor((todayUTC - lastUTC) / (1000 * 60 * 60 * 24));
   };
 
   const getEligibilityInfo = () => {
@@ -223,7 +246,7 @@ export function DonorDetailsPage() {
                         <div className="flex-1 min-w-0">
                           <div className="font-medium">{donation.location}</div>
                           <div className="text-sm text-muted-foreground">
-                            {formatDateLong(donation.date)}
+                            {formatDateLong(donation.dateDonation)}
                           </div>
                         </div>
                         {index === 0 && (
@@ -280,7 +303,7 @@ export function DonorDetailsPage() {
                       Última doação
                     </div>
                     <div className="font-medium">
-                      {formatDateLong(donor.lastDonation)}
+                      {formatDateLong(donor.lastDonation ?? null)}
                     </div>
                     {donor.lastDonation != null && (
                       <div className="text-sm text-muted-foreground mt-1">

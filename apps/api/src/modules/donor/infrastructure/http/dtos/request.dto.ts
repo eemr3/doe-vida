@@ -9,6 +9,7 @@ import {
 } from 'class-validator';
 import { BloodType } from '../../../domain/enum/boodtype.enum';
 import { Type } from 'class-transformer';
+import { GenderType } from '../../../domain/enum/Gender-type.enum';
 
 export class RegisterDonorRequestDto {
   @IsString()
@@ -28,6 +29,10 @@ export class RegisterDonorRequestDto {
   @IsDate()
   dateOfBirth: Date;
 
+  @IsEnum(GenderType)
+  @IsNotEmpty()
+  gender: GenderType;
+
   @IsString()
   @IsNotEmpty()
   city: string;
@@ -41,8 +46,8 @@ export class RegisterDonorRequestDto {
   weight: number;
 
   @IsOptional()
-  @IsDate()
-  lastDonationDate?: Date;
+  @IsString()
+  lastDonationDate?: string;
 
   @IsOptional()
   @IsString()

@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { BloodType } from '../../domain/enum/boodtype.enum';
 import { DonationOrmEntity } from './donation.orm-entity';
+import { GenderType } from '../../domain/enum/Gender-type.enum';
 
 @Entity('donors')
 export class DonorOrmEntity {
@@ -24,6 +25,9 @@ export class DonorOrmEntity {
 
   @Column({ name: 'date_of_birth' })
   dateOfBirth: Date;
+
+  @Column()
+  gender: GenderType;
 
   @Column()
   city: string;

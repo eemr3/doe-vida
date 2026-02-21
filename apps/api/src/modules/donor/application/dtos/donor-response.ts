@@ -1,4 +1,5 @@
 import { BloodType } from '../../domain/enum/boodtype.enum';
+import { GenderType } from '../../domain/enum/Gender-type.enum';
 
 interface DonationHistory {
   dateDonation: Date;
@@ -34,6 +35,7 @@ export interface DonorByIdResponseDto {
   phone: string;
   dateOfBirth: Date;
   city: string;
+  gender: GenderType;
   bloodType: BloodType;
   weight: number;
   createdAt: Date;
@@ -41,5 +43,6 @@ export interface DonorByIdResponseDto {
   eligible: boolean;
   lastDonation?: Date | null;
   registrationDate: Date;
+  nextDonationDate?: Date | null;
   donationHistory?: DonationHistory[] | null;
 }

@@ -51,7 +51,7 @@ export function DonorsListPage() {
       d.phone,
       d.bloodType,
       d.city,
-      formatDate(d.lastDonation),
+      formatDate(d.lastDonation ?? ''),
       d.eligible ? 'Sim' : 'Não',
     ]);
     const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
