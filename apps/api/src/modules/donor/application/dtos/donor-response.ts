@@ -1,6 +1,6 @@
 import { BloodType } from '../../domain/enum/boodtype.enum';
 import { GenderType } from '../../domain/enum/Gender-type.enum';
-import { EligibilityResult } from '../../domain/value-object/eligibility-result.vo';
+import { EligibilityResult } from '../../domain/value-objects/eligibility-result.vo';
 
 interface DonationHistory {
   dateDonation: Date;

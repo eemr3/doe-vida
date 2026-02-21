@@ -4,7 +4,7 @@ import { BloodType } from '../enum/boodtype.enum';
 import { GenderType } from '../enum/Gender-type.enum';
 import { Donor } from '../types/donor';
 import { DonationEntity } from './donation.entiry';
-import { EligibilityResult } from '../value-object/eligibility-result.vo';
+import { EligibilityResult } from '../value-objects/eligibility-result.vo';
 
 export class DonorEntity {
   private static readonly MIN_WEIGHT = 50;
