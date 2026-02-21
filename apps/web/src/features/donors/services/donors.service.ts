@@ -48,8 +48,8 @@ function mapApiItemToDonor(item: DonorsApiItem): Donor {
       : undefined,
     registrationDate: item.registeredAt ?? '',
     eligible: item.eligible,
-    nextDonationDate: null,
-    donationHistory: [],
+    nextDonationDate: item.nextDonationDate ?? '',
+    donationHistory: item.donationHistory ?? [],
   };
 }
 
@@ -87,7 +87,7 @@ export const donorsService = {
   async getById(id: string): Promise<Donor | null> {
     try {
       const { data } = await apiClient.get<GetDonorByIdApiResponse>(`/donors/${id}`);
-      console.log('data getById', data);
+
       return mapGetDonorByIdToDonor(data);
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.status === 404) return null;
@@ -96,7 +96,6 @@ export const donorsService = {
   },
 
   async register(formData: DonorFormData): Promise<{ id: string }> {
-    console.log('formData', formData);
     const body: RegisterDonorApiRequest = {
       name: formData.name.trim(),
       email: formData.email.trim(),

@@ -50,6 +50,8 @@ export interface DonorsApiItem {
   lastDonation?: Date | null;
   /** Data de cadastro (ISO). */
   registeredAt?: string;
+  nextDonationDate?: string;
+  donationHistory?: { dateDonation: string; location: string }[];
 }
 
 export interface DonorsApiResponse {

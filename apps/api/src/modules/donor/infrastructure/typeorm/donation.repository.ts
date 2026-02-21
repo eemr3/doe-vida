@@ -17,7 +17,6 @@ export class TypeOrmDonationRepository implements IDonationRepository {
     donation: DonationEntity,
     manager?: EntityManager,
   ): Promise<DonationEntity> {
-    console.log('create donation', donation);
     const repo = manager
       ? manager.getRepository(DonationOrmEntity)
       : this.donationRepo;

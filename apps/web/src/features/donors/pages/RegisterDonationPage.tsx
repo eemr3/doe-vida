@@ -64,7 +64,6 @@ export function RegisterDonationPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
     await donationService.register(formData);
     setSubmitted(true);
     setFormData({

@@ -51,6 +51,9 @@ export class GetAllDonorUseCase {
         age: age,
         eligible: eligible,
         lastDonation,
+        nextDonationDate: lastDonation
+          ? donorEntity.getNextDonationDate(lastDonation)
+          : null,
         registrationDate: registeredAt,
         donationHistory,
       };

@@ -36,6 +36,5 @@ export function useDonorById(id: string): {
     };
   }, [id]);
 
-  console.log(donor);
   return { donor, loading, error };
 }

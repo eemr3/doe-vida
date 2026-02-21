@@ -37,7 +37,6 @@ export class DonorMapper {
     donor: DonorEntity,
     donations?: DonationEntity[],
   ): DonorByIdResponseDto {
-    console.log(donor.canDonate());
     return {
       id: donor.id,
       name: donor.name,

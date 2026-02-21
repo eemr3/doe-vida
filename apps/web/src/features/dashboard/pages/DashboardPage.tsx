@@ -77,9 +77,10 @@ export function DashboardPage() {
       donorsService.list({ page: 1, pageSize: 500 }),
     ])
       .then(([totalRes, eligibleRes, listRes]) => {
+        const eligibleCount = eligibleRes.items.filter((d) => d.eligible === true).length;
         if (cancelled) return;
         setTotalCount(totalRes.totalCount);
-        setEligibleCount(eligibleRes.totalCount);
+        setEligibleCount(eligibleCount);
         setDonors(listRes.items);
       })
       .catch((err) => {
@@ -130,6 +131,7 @@ export function DashboardPage() {
     (sum, d) => sum + (d.donationHistory?.length ?? 0),
     0,
   );
+
   const upcomingCount = donors.filter((d) => d.nextDonationDate).length;
 
   const bloodTypeStats = donors.reduce<Record<string, number>>((acc, d) => {
