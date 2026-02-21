@@ -45,6 +45,7 @@ export function RegisterDonationPage() {
   const displayName = donor?.name ?? '';
   const email = donor?.email ?? '';
   const phone = donor?.phone ?? '';
+  const bloodType = donor?.bloodType ?? '';
 
   const navigate = useNavigate();
 
@@ -93,16 +94,16 @@ export function RegisterDonationPage() {
           <div className="mb-8">
             <button
               type="button"
-              onClick={() => navigate('/')}
+              onClick={() => navigate(`/donors/${id}`)}
               className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-4"
             >
               <ArrowLeft className="w-5 h-5" aria-hidden />
               Voltar
             </button>
-            <h1 className="text-3xl sm:text-4xl font-bold mb-2">Cadastro de Doador</h1>
+            {/* <h1 className="text-3xl sm:text-4xl font-bold mb-2">Cadastro de Doação</h1>
             <p className="text-muted-foreground">
               Preencha seus dados para se tornar um doador de sangue
-            </p>
+            </p> */}
           </div>
 
           {submitted && (
@@ -153,6 +154,11 @@ export function RegisterDonationPage() {
                 <div className="space-y-4">
                   <div className="grid sm:grid-cols-2 gap-4">
                     <FormField
+                      label="Tipo Sanguíneo *"
+                      value={bloodType}
+                      disabled={true}
+                    />
+                    <FormField
                       label="Data da Doação *"
                       type="date"
                       value={formData.date}
@@ -163,7 +169,7 @@ export function RegisterDonationPage() {
                   </div>
                   <div className="grid sm:grid-cols-2 gap-4">
                     <SelectField
-                      label="Tipo Sanguíneo *"
+                      label="Local da Doação *"
                       options={LOCATION_OPTIONS}
                       value={formData.location}
                       onChange={(e) => handleChange('location', e.target.value)}
@@ -173,10 +179,10 @@ export function RegisterDonationPage() {
                 </div>
               </div>
 
-              <Alert
+              {/* <Alert
                 variant="info"
                 message="Os dados fornecidos serão utilizados apenas para fins de cadastro e contato relacionado à doação de sangue."
-              />
+              /> */}
 
               <div className="flex gap-4 pt-4">
                 <Button

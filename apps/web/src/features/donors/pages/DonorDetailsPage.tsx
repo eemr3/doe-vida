@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDonorById } from '../hooks';
+import { IneligibilityReason } from '../types/donor';
 
 function formatDateLong(dateString: string | null): string {
   if (!dateString) return 'Não informado';
@@ -110,34 +111,52 @@ export function DonorDetailsPage() {
   };
 
   const getEligibilityInfo = () => {
-    if (!donor.lastDonation) {
+    if (donor.eligible.eligible) {
       return {
-        title: 'Pronto para doar',
-        message: 'Este doador nunca realizou uma doação e está elegível para doar.',
+        title: donor.lastDonation ? 'Elegível para doação' : 'Pronto para doar',
+        message: donor.lastDonation
+          ? `Tempo de espera cumprido. Próxima doação: ${formatDateLong(donor.nextDonationDate)}`
+          : 'Este doador nunca realizou uma doação e está elegível para doar.',
         icon: CheckCircle,
         variant: 'success' as const,
       };
     }
-    if (donor.eligible) {
-      return {
-        title: 'Elegível para doação',
-        message: `Tempo de espera já foi cumprido. Próxima doação possível: ${formatDateLong(donor.nextDonationDate)}`,
-        icon: CheckCircle,
-        variant: 'success' as const,
-      };
-    }
-    const daysSince = getDaysSinceLastDonation();
-    const daysRemaining = donor.nextDonationDate
-      ? Math.ceil(
-          (new Date(donor.nextDonationDate).getTime() - new Date().getTime()) /
-            (1000 * 60 * 60 * 24),
-        )
-      : 0;
+
+    const reason = donor.eligible.reason;
+
+    const reasonMap: Record<
+      IneligibilityReason,
+      { title: string; message: string; isError: boolean }
+    > = {
+      WEIGHT_TOO_LOW: {
+        title: 'Peso insuficiente',
+        message: `O doador está abaixo do peso mínimo de 50kg (atual: ${donor.weight}kg).`,
+        isError: true,
+      },
+      TOO_YOUNG: {
+        title: 'Idade mínima não atingida',
+        message: `O doador precisa ter pelo menos 16 anos (atual: ${donor.age} anos).`,
+        isError: true,
+      },
+      TOO_OLD: {
+        title: 'Idade máxima excedida',
+        message: `Doações não são permitidas acima de 69 anos (atual: ${donor.age} anos).`,
+        isError: true,
+      },
+      DONATION_INTERVAL_NOT_MET: {
+        title: 'Aguardando período de intervalo',
+        message: `Última doação há ${getDaysSinceLastDonation()} dias. Aguarde até ${formatDateLong(donor.nextDonationDate)} (${Math.ceil((new Date(donor.nextDonationDate!).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} dias restantes)`,
+        isError: false,
+      },
+    };
+
+    const info = reason ? reasonMap[reason] : reasonMap.DONATION_INTERVAL_NOT_MET;
+
     return {
-      title: 'Aguardando período de intervalo',
-      message: `Última doação há ${daysSince} dias. Aguarde até ${formatDateLong(donor.nextDonationDate)} (${daysRemaining} dias restantes)`,
-      icon: Clock,
-      variant: 'warning' as const,
+      title: info.title,
+      message: info.message,
+      icon: info.isError ? AlertCircle : Clock,
+      variant: info.isError ? ('error' as const) : ('warning' as const),
     };
   };
 
@@ -163,12 +182,13 @@ export function DonorDetailsPage() {
                 <Badge variant="default" className="bg-primary text-primary-foreground">
                   {donor.bloodType}
                 </Badge>
-                <Badge variant={donor.eligible ? 'success' : 'warning'}>
-                  {donor.eligible ? 'Elegível' : 'Aguardando'}
+                <Badge variant={donor.eligible.eligible ? 'success' : 'warning'}>
+                  {donor.eligible.eligible ? 'Elegível' : 'Aguardando'}
                 </Badge>
               </div>
             </div>
             <Button
+              onClick={() => navigate(`/donors/${id}/register-donation`)}
               variant="outline"
               className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
             >
@@ -268,7 +288,9 @@ export function DonorDetailsPage() {
               className={`border-2 ${
                 eligibilityInfo.variant === 'success'
                   ? 'border-success'
-                  : 'border-warning'
+                  : eligibilityInfo.variant === 'error'
+                    ? 'border-destructive'
+                    : 'border-warning'
               }`}
             >
               <div className="text-center">
@@ -276,7 +298,9 @@ export function DonorDetailsPage() {
                   className={`w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center ${
                     eligibilityInfo.variant === 'success'
                       ? 'bg-success text-success-foreground'
-                      : 'bg-warning text-warning-foreground'
+                      : eligibilityInfo.variant === 'error'
+                        ? 'bg-destructive text-destructive-foreground'
+                        : 'bg-warning text-warning-foreground'
                   }`}
                 >
                   <EligibilityIcon className="w-8 h-8" aria-hidden />

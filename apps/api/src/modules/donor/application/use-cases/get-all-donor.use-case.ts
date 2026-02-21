@@ -29,7 +29,8 @@ export class GetAllDonorUseCase {
         donor.donations,
       );
       const age = donorEntity.getAge();
-      const eligible = donorEntity.canDonate();
+      const eligible = donorEntity.checkEligibility();
+
       const donationHistory =
         donorEntity.donations?.map((donation) => ({
           dateDonation: donation.dateDonation!,
@@ -49,10 +50,10 @@ export class GetAllDonorUseCase {
         weight: donorEntity.weight,
         createdAt: donorEntity.createdAt,
         age: age,
-        eligible: eligible,
+        eligible,
         lastDonation,
         nextDonationDate: lastDonation
-          ? donorEntity.getNextDonationDate(lastDonation)
+          ? donorEntity.getNextDonationDate()
           : null,
         registrationDate: registeredAt,
         donationHistory,

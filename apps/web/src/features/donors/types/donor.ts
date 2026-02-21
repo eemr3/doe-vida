@@ -3,6 +3,17 @@ export interface DonationRecord {
   location: string;
 }
 
+export type IneligibilityReason =
+  | 'WEIGHT_TOO_LOW'
+  | 'TOO_YOUNG'
+  | 'TOO_OLD'
+  | 'DONATION_INTERVAL_NOT_MET';
+
+export interface EligibilityResult {
+  eligible: boolean;
+  reason?: IneligibilityReason;
+  nextDonationDate?: string;
+}
 export interface Donor {
   id: string;
   name: string;
@@ -16,7 +27,7 @@ export interface Donor {
   city: string;
   lastDonation?: string;
   registrationDate: string;
-  eligible: boolean;
+  eligible: EligibilityResult;
   nextDonationDate: string | null;
   donationHistory: DonationRecord[];
 }
@@ -45,7 +56,7 @@ export interface DonorsApiItem {
   age: number;
   bloodType: number;
   weight: number;
-  eligible: boolean;
+  eligible: EligibilityResult;
   /** Data da última doação (ISO). Null se nunca doou. */
   lastDonation?: Date | null;
   /** Data de cadastro (ISO). */
@@ -89,7 +100,7 @@ export interface GetDonorByIdApiResponse {
   age: number;
   bloodType: number;
   weight: number;
-  eligible: boolean;
+  eligible: EligibilityResult;
   registeredAt: string; // ISO
   lastDonation: string; // ISO
   nextDonationDate: string | null; // ISO

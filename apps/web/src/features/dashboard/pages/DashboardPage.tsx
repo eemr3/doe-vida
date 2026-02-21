@@ -77,7 +77,9 @@ export function DashboardPage() {
       donorsService.list({ page: 1, pageSize: 500 }),
     ])
       .then(([totalRes, eligibleRes, listRes]) => {
-        const eligibleCount = eligibleRes.items.filter((d) => d.eligible === true).length;
+        const eligibleCount = eligibleRes.items.filter(
+          (d) => d.eligible.eligible === true,
+        ).length;
         if (cancelled) return;
         setTotalCount(totalRes.totalCount);
         setEligibleCount(eligibleCount);

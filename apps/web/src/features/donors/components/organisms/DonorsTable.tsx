@@ -70,8 +70,8 @@ export function DonorsTable({
                 {formatDate(donor.lastDonation ?? null)}
               </TableCell>
               <TableCell>
-                <Badge variant={donor.eligible ? 'success' : 'warning'}>
-                  {donor.eligible ? 'Elegível' : 'Aguardando'}
+                <Badge variant={donor.eligible.eligible ? 'success' : 'warning'}>
+                  {donor.eligible.eligible ? 'Elegível' : 'Aguardando'}
                 </Badge>
               </TableCell>
               <TableCell>

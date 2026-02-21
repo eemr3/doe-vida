@@ -47,7 +47,11 @@ function mapApiItemToDonor(item: DonorsApiItem): Donor {
       ? new Date(item.lastDonation).toISOString()
       : undefined,
     registrationDate: item.registeredAt ?? '',
-    eligible: item.eligible,
+    eligible: {
+      eligible: item.eligible.eligible,
+      reason: item.eligible.reason,
+      nextDonationDate: item.eligible.nextDonationDate,
+    },
     nextDonationDate: item.nextDonationDate ?? '',
     donationHistory: item.donationHistory ?? [],
   };

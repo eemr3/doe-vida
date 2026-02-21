@@ -20,7 +20,7 @@ export class DonorMapper {
           weight: donor.weight,
           createdAt: donor.createdAt,
           age: donor.getAge(),
-          eligible: donor.canDonate(),
+          eligible: donor.checkEligibility(),
           lastDonation: donations?.[0]?.dateDonation ?? null,
           registrationDate: donor.createdAt,
           donationHistory:
@@ -49,10 +49,10 @@ export class DonorMapper {
       weight: donor.weight,
       createdAt: donor.createdAt,
       age: donor.getAge(),
-      eligible: donor.canDonate(),
+      eligible: donor.checkEligibility(),
       lastDonation: donations?.[0]?.dateDonation ?? null,
       nextDonationDate: donations?.[0]?.dateDonation
-        ? donor.getNextDonationDate(donations?.[0]?.dateDonation)
+        ? donor.getNextDonationDate()
         : null,
       registrationDate: donor.createdAt,
       donationHistory:

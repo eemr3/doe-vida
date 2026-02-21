@@ -1,5 +1,6 @@
 import { BloodType } from '../../domain/enum/boodtype.enum';
 import { GenderType } from '../../domain/enum/Gender-type.enum';
+import { EligibilityResult } from '../../domain/value-object/eligibility-result.vo';
 
 interface DonationHistory {
   dateDonation: Date;
@@ -17,7 +18,7 @@ interface Item {
   weight: number;
   createdAt: Date;
   age: number;
-  eligible: boolean;
+  eligible: EligibilityResult;
   lastDonation?: Date | null;
   registrationDate: Date;
   donationHistory?: DonationHistory[] | null;
@@ -40,7 +41,7 @@ export interface DonorByIdResponseDto {
   weight: number;
   createdAt: Date;
   age: number;
-  eligible: boolean;
+  eligible: EligibilityResult;
   lastDonation?: Date | null;
   registrationDate: Date;
   nextDonationDate?: Date | null;
