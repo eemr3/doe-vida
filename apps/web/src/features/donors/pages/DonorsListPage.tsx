@@ -33,6 +33,7 @@ export function DonorsListPage() {
     loading,
     error,
     totalCount,
+    stats,
   } = useDonors();
 
   const exportToCSV = () => {
@@ -63,14 +64,6 @@ export function DonorsListPage() {
     link.download = 'doadores.csv';
     link.click();
   };
-
-  const newThisMonth = donors.filter((d) => {
-    if (!d.registrationDate) return false;
-    const reg = new Date(d.registrationDate);
-    if (Number.isNaN(reg.getTime())) return false;
-    const now = new Date();
-    return reg.getMonth() === now.getMonth() && reg.getFullYear() === now.getFullYear();
-  }).length;
 
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
@@ -185,14 +178,7 @@ export function DonorsListPage() {
         )}
       </Card>
 
-      <div className="mt-8">
-        <DonorsListStats
-          totalCount={totalCount}
-          eligibleCount={donors.filter((d) => d.eligible).length}
-          ineligibleCount={donors.filter((d) => !d.eligible).length}
-          newThisMonthCount={newThisMonth}
-        />
-      </div>
+      <div className="mt-8">{stats && <DonorsListStats stats={stats} />}</div>
     </PageLayout>
   );
 }

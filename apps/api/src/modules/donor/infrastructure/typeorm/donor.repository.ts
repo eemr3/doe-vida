@@ -5,6 +5,7 @@ import { DonationEntity } from '../../domain/entities/donation.entiry';
 import { DonorEntity } from '../../domain/entities/donor.entity';
 import {
   DonorQuery,
+  DonorStatsDto,
   IDonorRepository,
 } from '../../domain/repositories/donor.repository';
 import { ResponseDonorsDto } from '../http/dtos/response-donors.dto';
@@ -225,5 +226,77 @@ export class TypeOrmDonorRepository implements IDonorRepository {
     await this.donorRepo.save(ormDonor);
 
     return donor;
+  }
+
+  async getStats(): Promise<DonorStatsDto> {
+    const now = new Date();
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    now.setHours(0, 0, 0, 0);
+
+    const minBirthDate = new Date(now);
+    minBirthDate.setFullYear(now.getFullYear() - DonorEntity.getMaxAge());
+
+    const maxBirthDate = new Date(now);
+    maxBirthDate.setFullYear(now.getFullYear() - DonorEntity.getMinAge());
+
+    const totalCount = await this.donorRepo.count();
+
+    const eligibleCount = await this.donorRepo
+      .createQueryBuilder('donor')
+      .where('donor.weight >= :minWeight', { minWeight: 50 })
+      .andWhere('donor.date_of_birth >= :minBirth', { minBirth: minBirthDate })
+      .andWhere('donor.date_of_birth <= :maxBirth', { maxBirth: maxBirthDate })
+      .andWhere(
+        `(
+        NOT EXISTS (
+          SELECT 1 FROM donations d2 WHERE d2."donor_id" = donor.id
+        )
+        OR (
+          SELECT MAX(d3."date_donation") FROM donations d3 WHERE d3."donor_id" = donor.id
+        ) + (
+          CASE donor.gender
+            WHEN 'MALE' THEN INTERVAL '60 days'
+            ELSE INTERVAL '90 days'
+          END
+        ) <= :today
+      )`,
+        { today: now },
+      )
+      .getCount();
+
+    const waitingCount = await this.donorRepo
+      .createQueryBuilder('donor')
+      .where('donor.weight >= :minWeight', { minWeight: 50 })
+      .andWhere('donor.date_of_birth >= :minBirth', { minBirth: minBirthDate })
+      .andWhere('donor.date_of_birth <= :maxBirth', { maxBirth: maxBirthDate })
+      .andWhere(
+        `
+      EXISTS (
+        SELECT 1 FROM donations d2 WHERE d2."donor_id" = donor.id
+      )
+      AND (
+        SELECT MAX(d3."date_donation") FROM donations d3 WHERE d3."donor_id" = donor.id
+      ) + (
+        CASE donor.gender
+          WHEN 'MALE' THEN INTERVAL '60 days'
+          ELSE INTERVAL '90 days'
+        END
+      ) > :today
+    `,
+        { today: now },
+      )
+      .getCount();
+
+    const newThisMonthCount = await this.donorRepo
+      .createQueryBuilder('donor')
+      .where('donor.createdAt >= :firstDay', { firstDay: firstDayOfMonth })
+      .getCount();
+
+    return {
+      totalCount,
+      eligibleCount,
+      waitingCount,
+      newThisMonthCount,
+    };
   }
 }

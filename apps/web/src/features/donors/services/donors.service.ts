@@ -4,6 +4,7 @@ import type { Donor, DonorFormData } from '../types';
 import {
   DonorsApiItem,
   DonorsApiResponse,
+  DonorStatsDto,
   GetDonorByIdApiResponse,
   RegisterDonorApiRequest,
   RegisterDonorApiResponse,
@@ -82,12 +83,15 @@ export const donorsService = {
       },
     });
 
-    console.log('data', data);
-
     return {
       items: data.items.map(mapApiItemToDonor),
       totalCount: data.totalCount,
     };
+  },
+
+  async getStats(): Promise<DonorStatsDto> {
+    const { data } = await apiClient.get<DonorStatsDto>('/donors/stats');
+    return data;
   },
 
   async getById(id: string): Promise<Donor | null> {

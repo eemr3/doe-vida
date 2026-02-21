@@ -106,3 +106,10 @@ export interface GetDonorByIdApiResponse {
   nextDonationDate: string | null; // ISO
   donationHistory: { dateDonation: string; location: string }[];
 }
+
+export interface DonorStatsDto {
+  totalCount: number;
+  eligibleCount: number;
+  waitingCount: number;
+  newThisMonthCount: number;
+}

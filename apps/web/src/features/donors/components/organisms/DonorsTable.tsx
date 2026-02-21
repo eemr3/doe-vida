@@ -70,9 +70,16 @@ export function DonorsTable({
                 {formatDate(donor.lastDonation ?? null)}
               </TableCell>
               <TableCell>
-                <Badge variant={donor.eligible.eligible ? 'success' : 'warning'}>
-                  {donor.eligible.eligible ? 'Elegível' : 'Aguardando'}
-                </Badge>
+                {(() => {
+                  if (donor.eligible.eligible) {
+                    return <Badge variant="success">Elegível</Badge>;
+                  }
+                  if (donor.eligible.reason === 'DONATION_INTERVAL_NOT_MET') {
+                    return <Badge variant="warning">Aguardando</Badge>;
+                  }
+
+                  return <Badge variant="error">Inapto</Badge>;
+                })()}
               </TableCell>
               <TableCell>
                 <div className="flex items-center justify-end gap-2">

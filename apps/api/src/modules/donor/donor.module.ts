@@ -16,6 +16,7 @@ import {
   TRANSACTIONS_SERVICE,
   TransactionsService,
 } from '../../shared/transaction/transactions.service';
+import { GetDonorStatsUseCase } from './application/use-cases/get-donor-stats.use-case ';
 
 @Module({
   imports: [TypeOrmModule.forFeature([DonorOrmEntity, DonationOrmEntity])],
@@ -25,6 +26,7 @@ import {
     GetAllDonorUseCase,
     AddDonationUseCase,
     GetDonorByIdUseCase,
+    GetDonorStatsUseCase,
     {
       provide: DONOR_REPOSITORY,
       useClass: TypeOrmDonorRepository,

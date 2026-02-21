@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { donorsService } from '../services';
 import type { Donor } from '../types';
+import { DonorStatsDto } from '../types/donor';
 
 export interface UseDonorsFilters {
   search?: string;
@@ -27,6 +28,7 @@ export function useDonors(initialFilters: UseDonorsFilters = {}) {
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [stats, setStats] = useState<DonorStatsDto | null>(null);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -81,6 +83,12 @@ export function useDonors(initialFilters: UseDonorsFilters = {}) {
     ];
   }, [donors]);
 
+  useEffect(() => {
+    donorsService.getStats().then((stats) => {
+      setStats(stats);
+    });
+  }, []);
+
   const clearFilters = () => {
     setSearchTerm('');
     setFilterCity('');
@@ -109,5 +117,6 @@ export function useDonors(initialFilters: UseDonorsFilters = {}) {
     loading,
     error,
     totalCount,
+    stats,
   };
 }

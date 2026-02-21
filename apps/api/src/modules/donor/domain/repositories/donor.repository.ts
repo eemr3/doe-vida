@@ -14,6 +14,13 @@ export interface DonorQuery {
   eligible?: boolean;
   search?: string;
 }
+
+export interface DonorStatsDto {
+  totalCount: number;
+  eligibleCount: number;
+  waitingCount: number;
+  newThisMonthCount: number;
+}
 export interface IDonorRepository {
   save(donor: DonorEntity, manager?: EntityManager): Promise<DonorEntity>;
   findByEmail(
@@ -23,4 +30,5 @@ export interface IDonorRepository {
   findById(id: string): Promise<DonorEntity | null>;
   findAll(query: DonorQuery): Promise<ResponseDonorsDto>;
   update(donor: DonorEntity): Promise<DonorEntity>;
+  getStats(): Promise<DonorStatsDto>;
 }
