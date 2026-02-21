@@ -1,13 +1,14 @@
-import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, EntityRepository, Repository } from 'typeorm';
-import { DonorEntity } from '../../domain/entities/donor.entity';
-import { IDonorRepository } from '../../domain/repositories/donor.repository';
-import { DonorOrmEntity } from './donor.orm-entity';
-import { randomUUID } from 'crypto';
 import { Injectable } from '@nestjs/common';
-import { ResponseDonorsDto } from '../http/dtos/response-donors.dto';
-import { DonationOrmEntity } from './donation.orm-entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { DonationEntity } from '../../domain/entities/donation.entiry';
+import { DonorEntity } from '../../domain/entities/donor.entity';
+import {
+  DonorQuery,
+  IDonorRepository,
+} from '../../domain/repositories/donor.repository';
+import { ResponseDonorsDto } from '../http/dtos/response-donors.dto';
+import { DonorOrmEntity } from './donor.orm-entity';
 
 @Injectable()
 export class TypeOrmDonorRepository implements IDonorRepository {
@@ -83,8 +84,93 @@ export class TypeOrmDonorRepository implements IDonorRepository {
       : null;
   }
 
-  async findAll(): Promise<ResponseDonorsDto> {
-    const entities = await this.donorRepo.find({ relations: ['donations'] });
+  async findAll(query: DonorQuery): Promise<ResponseDonorsDto> {
+    const page = query.page ?? 1;
+    const limit = query.pageSize ?? 10;
+
+    const db = this.donorRepo
+      .createQueryBuilder('donor')
+      .leftJoinAndSelect('donor.donations', 'donations');
+
+    if (query.city) {
+      db.andWhere('donor.city = :city', { city: query.city });
+    }
+
+    if (query.bloodType) {
+      db.andWhere('donor.bloodType = :bloodType', {
+        bloodType: Number(query.bloodType),
+      });
+    }
+
+    if (query.eligible !== undefined) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const minBirthDate = new Date(today);
+      minBirthDate.setFullYear(today.getFullYear() - DonorEntity.getMaxAge());
+      const maxBirthDate = new Date(today);
+      maxBirthDate.setFullYear(today.getFullYear() - DonorEntity.getMinAge());
+
+      if (query.eligible === true) {
+        // Peso OK + idade OK + (sem doações OU intervalo já cumprido)
+        db.andWhere('donor.weight >= :minWeight', { minWeight: 50 });
+        db.andWhere('donor.date_of_birth >= :minBirth', {
+          minBirth: minBirthDate,
+        });
+        db.andWhere('donor.date_of_birth <= :maxBirth', {
+          maxBirth: maxBirthDate,
+        });
+        db.andWhere(
+          `(
+          NOT EXISTS (
+            SELECT 1 FROM donations d2 WHERE d2."donor_id" = donor.id
+          )
+          OR (
+            SELECT MAX(d3."date_donation") FROM donations d3 WHERE d3."donor_id" = donor.id
+          ) + (
+            CASE donor.gender
+              WHEN 'MALE' THEN INTERVAL '60 days'
+              ELSE INTERVAL '90 days'
+            END
+          ) <= :today
+        )`,
+          { today },
+        );
+      } else {
+        // eligible = false: peso baixo OU idade fora do range OU intervalo não cumprido
+        db.andWhere(
+          `(
+          donor.weight < :minWeight
+          OR donor.date_of_birth < :minBirth
+          OR donor.date_of_birth > :maxBirth
+          OR (
+            EXISTS (
+              SELECT 1 FROM donations d2 WHERE d2."donor_id" = donor.id
+            )
+            AND (
+              SELECT MAX(d3."date_donation") FROM donations d3 WHERE d3."donor_id" = donor.id
+            ) + (
+              CASE donor.gender
+                WHEN 'MALE' THEN INTERVAL '60 days'
+                ELSE INTERVAL '90 days'
+              END
+            ) > :today
+          )
+        )`,
+          {
+            minWeight: 50,
+            minBirth: minBirthDate,
+            maxBirth: maxBirthDate,
+            today,
+          },
+        );
+      }
+    }
+    db.skip((Number(page) - 1) * Number(limit));
+    db.take(Number(limit));
+
+    const [entities, total] = await db.getManyAndCount();
+
     const result = entities.map(
       (entity) =>
         new DonorEntity(
@@ -121,7 +207,7 @@ export class TypeOrmDonorRepository implements IDonorRepository {
             location: donation.location,
           })) ?? [],
       })),
-      totalCount: result.length,
+      totalCount: total,
     };
   }
 

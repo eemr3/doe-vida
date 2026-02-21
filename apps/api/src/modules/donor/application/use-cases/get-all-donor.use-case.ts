@@ -2,6 +2,7 @@ import { Inject } from '@nestjs/common';
 import { DonorEntity } from '../../domain/entities/donor.entity';
 import {
   DONOR_REPOSITORY,
+  DonorQuery,
   IDonorRepository,
 } from '../../domain/repositories/donor.repository';
 import { DonorResponseDto } from '../dtos/donor-response';
@@ -12,9 +13,10 @@ export class GetAllDonorUseCase {
     private readonly donorRepository: IDonorRepository,
   ) {}
 
-  async execute(): Promise<DonorResponseDto> {
-    const donors = await this.donorRepository.findAll();
-    const result = donors.items.map((donor) => {
+  async execute(query: DonorQuery): Promise<DonorResponseDto> {
+    const donors = await this.donorRepository.findAll(query);
+    console.log('query', query);
+    let result = donors.items.map((donor) => {
       const donorEntity = new DonorEntity(
         donor.id,
         donor.name,
@@ -59,6 +61,12 @@ export class GetAllDonorUseCase {
         donationHistory,
       };
     });
+
+    if (query.eligible !== undefined) {
+      result = result.filter(
+        (donor) => donor.eligible.eligible === query.eligible,
+      );
+    }
     return {
       items: result,
       totalCount: donors.totalCount,

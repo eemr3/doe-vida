@@ -14,12 +14,14 @@ const SEARCH_DEBOUNCE_MS = 300;
 
 export function useDonors(initialFilters: UseDonorsFilters = {}) {
   const [searchTerm, setSearchTerm] = useState(initialFilters.search ?? '');
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(initialFilters.search ?? '');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(
+    initialFilters.search ?? '',
+  );
   const [filterCity, setFilterCity] = useState(initialFilters.city ?? '');
   const [filterBloodType, setFilterBloodType] = useState(initialFilters.bloodType ?? '');
-  const [filterEligibility, setFilterEligibility] = useState<'eligible' | 'ineligible' | ''>(
-    initialFilters.eligibility ?? ''
-  );
+  const [filterEligibility, setFilterEligibility] = useState<
+    'eligible' | 'ineligible' | ''
+  >(initialFilters.eligibility ?? '');
   const [currentPage, setCurrentPage] = useState(1);
   const [donors, setDonors] = useState<Donor[]>([]);
   const [totalCount, setTotalCount] = useState(0);

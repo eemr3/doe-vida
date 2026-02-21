@@ -137,4 +137,20 @@ export class DonorEntity {
 
     return age;
   }
+
+  public static getMinAge(): number {
+    return this.MIN_AGE;
+  }
+  public static getMaxAge(): number {
+    return this.MAX_AGE;
+  }
+  public static getMaleDonationIntervalDays(): number {
+    return this.MALE_DONATION_INTERVAL_DAYS;
+  }
+  public static getFemaleDonationIntervalDays(): number {
+    return this.FEMALE_DONATION_INTERVAL_DAYS;
+  }
+  public static getMinWeight(): number {
+    return this.MIN_WEIGHT;
+  }
 }

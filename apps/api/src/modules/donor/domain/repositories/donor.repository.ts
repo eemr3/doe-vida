@@ -1,9 +1,19 @@
 import { EntityManager } from 'typeorm';
 import { ResponseDonorsDto } from '../../infrastructure/http/dtos/response-donors.dto';
 import { DonorEntity } from '../entities/donor.entity';
+import { EligibilityResult } from '../value-objects/eligibility-result.vo';
+import { BloodType } from '../enum/boodtype.enum';
 
 export const DONOR_REPOSITORY = 'DONOR_REPOSITORY';
 
+export interface DonorQuery {
+  page?: string;
+  pageSize?: string;
+  city?: string;
+  bloodType?: BloodType;
+  eligible?: boolean;
+  search?: string;
+}
 export interface IDonorRepository {
   save(donor: DonorEntity, manager?: EntityManager): Promise<DonorEntity>;
   findByEmail(
@@ -11,6 +21,6 @@ export interface IDonorRepository {
     manager?: EntityManager,
   ): Promise<DonorEntity | null>;
   findById(id: string): Promise<DonorEntity | null>;
-  findAll(): Promise<ResponseDonorsDto>;
+  findAll(query: DonorQuery): Promise<ResponseDonorsDto>;
   update(donor: DonorEntity): Promise<DonorEntity>;
 }

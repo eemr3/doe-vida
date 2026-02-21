@@ -82,6 +82,8 @@ export const donorsService = {
       },
     });
 
+    console.log('data', data);
+
     return {
       items: data.items.map(mapApiItemToDonor),
       totalCount: data.totalCount,
