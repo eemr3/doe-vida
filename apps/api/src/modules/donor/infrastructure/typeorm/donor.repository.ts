@@ -93,6 +93,13 @@ export class TypeOrmDonorRepository implements IDonorRepository {
       .createQueryBuilder('donor')
       .leftJoinAndSelect('donor.donations', 'donations');
 
+    if (query.search) {
+      if (query.search) {
+        db.andWhere('(donor.name ILIKE :search OR donor.email ILIKE :search)', {
+          search: `%${query.search}%`,
+        });
+      }
+    }
     if (query.city) {
       db.andWhere('donor.city = :city', { city: query.city });
     }

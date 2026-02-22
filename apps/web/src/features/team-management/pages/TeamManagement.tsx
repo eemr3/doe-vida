@@ -33,14 +33,14 @@ import type { UserListItem } from '../types';
 
 const ROLE_OPTIONS = [
   { value: '', label: 'Todos os cargos' },
-  { value: 'Admin', label: 'Administrador' },
-  { value: 'Staff', label: 'Equipe' },
+  { value: 'ADMIN', label: 'Administrador' },
+  { value: 'STAFF', label: 'Equipe' },
 ];
 
 const STATUS_OPTIONS = [
   { value: '', label: 'Todos os status' },
-  { value: 'active', label: 'Ativos' },
-  { value: 'inactive', label: 'Inativos' },
+  { value: 'true', label: 'Ativos' },
+  { value: 'false', label: 'Inativos' },
 ];
 
 function formatDate(dateString: string): string {
@@ -52,7 +52,7 @@ function formatDate(dateString: string): string {
   });
 }
 
-export function UsersListPage() {
+export function TeamManagement() {
   const navigate = useNavigate();
   const [selectedUser, setSelectedUser] = useState<UserListItem | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
@@ -74,7 +74,7 @@ export function UsersListPage() {
     refetch,
   } = useUsers();
 
-  const adminCount = users.filter((u) => u.role === 'Admin').length;
+  const adminCount = users.filter((u) => u.role === 'ADMIN').length;
   const activeCount = users.filter((u) => u.isActive).length;
   const inactiveCount = users.filter((u) => !u.isActive).length;
 
@@ -124,7 +124,7 @@ export function UsersListPage() {
         <div className="max-w-7xl mx-auto px-10">
           <button
             type="button"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate('/dashboard')}
             className="flex items-center gap-2 mb-2 opacity-90 hover:opacity-100"
           >
             <span className="text-lg">←</span>
@@ -222,7 +222,7 @@ export function UsersListPage() {
           <p className="text-sm text-muted-foreground">
             Mostrando {users.length} de {totalCount} usuários
           </p>
-          <Button onClick={() => navigate('/users/new')} size="sm">
+          <Button onClick={() => navigate('/usres/new')} size="sm">
             <UserPlus className="w-4 h-4" aria-hidden />
             Novo usuário
           </Button>
@@ -268,12 +268,12 @@ export function UsersListPage() {
                           <Badge
                             variant="default"
                             className={
-                              user.role === 'Admin'
+                              user.role === 'ADMIN'
                                 ? 'bg-primary text-primary-foreground'
                                 : 'bg-muted text-muted-foreground'
                             }
                           >
-                            {user.role === 'Admin' ? 'Administrador' : 'Equipe'}
+                            {user.role === 'ADMIN' ? 'Administrador' : 'Equipe'}
                           </Badge>
                         </TableCell>
                         <TableCell>

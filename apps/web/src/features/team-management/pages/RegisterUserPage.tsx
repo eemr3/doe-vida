@@ -12,8 +12,8 @@ import type { UserFormData, UserRole } from '../types';
 import { usersService } from '../services';
 
 const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
-  { value: 'Staff', label: 'Equipe' },
-  { value: 'Admin', label: 'Administrador' },
+  { value: 'STAFF', label: 'Equipe' },
+  { value: 'ADMIN', label: 'Administrador' },
 ];
 
 const initialFormData: UserFormData = {
@@ -21,8 +21,7 @@ const initialFormData: UserFormData = {
   email: '',
   password: '',
   confirmPassword: '',
-  role: 'Staff',
-  isActive: true,
+  role: 'STAFF',
 };
 
 /** Validação de senha: mínimo 6 caracteres, ao menos uma maiúscula, uma minúscula e um número. */
@@ -69,7 +68,7 @@ export function RegisterUserPage() {
       setFormData(initialFormData);
       setTimeout(() => {
         setSubmitted(false);
-        navigate('/users');
+        navigate('/team-management');
       }, 1500);
     } catch (error: unknown) {
       const message =
@@ -93,7 +92,7 @@ export function RegisterUserPage() {
         <div className="mb-8">
           <button
             type="button"
-            onClick={() => navigate('/users')}
+            onClick={() => navigate('/team-management')}
             className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-4"
             aria-label="Voltar para lista de usuários"
           >
@@ -118,7 +117,9 @@ export function RegisterUserPage() {
         <Card padding="lg">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-primary">Dados do usuário</h3>
+              <h3 className="text-lg font-semibold mb-4 text-primary">
+                Dados do usuário
+              </h3>
               <div className="space-y-4">
                 <FormField
                   label="Nome completo *"
@@ -169,7 +170,7 @@ export function RegisterUserPage() {
                     onChange={(e) => handleChange('role', e.target.value as UserRole)}
                     error={errors.role}
                   />
-                  <div className="flex flex-col gap-2">
+                  {/* <div className="flex flex-col gap-2">
                     <label className="text-sm font-medium text-foreground">Status</label>
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -180,7 +181,7 @@ export function RegisterUserPage() {
                       />
                       <span className="text-sm">Usuário ativo</span>
                     </label>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

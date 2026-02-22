@@ -42,12 +42,12 @@ export function UserDetailsModal({ user, onClose, formatDate }: UserDetailsModal
             <Badge
               variant="default"
               className={
-                user.role === 'Admin'
+                user.role === 'ADMIN'
                   ? 'bg-primary text-primary-foreground mt-1'
                   : 'bg-muted text-muted-foreground mt-1'
               }
             >
-              {user.role === 'Admin' ? 'Administrador' : 'Equipe'}
+              {user.role === 'ADMIN' ? 'Administrador' : 'Equipe'}
             </Badge>
           </div>
 

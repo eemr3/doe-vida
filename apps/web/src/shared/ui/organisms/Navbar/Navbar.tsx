@@ -29,8 +29,8 @@ function getAdminNavItems(userRole?: string): NavItem[] {
     { label: 'Dashboard', value: 'dashboard' },
     { label: 'Doadores', value: 'donors-list' },
   ];
-  if (userRole === 'Admin') {
-    base.push({ label: 'Equipe', value: 'users' });
+  if (userRole === 'ADMIN') {
+    base.push({ label: 'Gerenciamento de Equipe', value: 'team-management' });
   }
   base.push({ label: 'Sair', value: 'landing' });
   return base;

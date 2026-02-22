@@ -1,5 +1,5 @@
 /** Papel do usuário no sistema (espelha enum da API). */
-export type UserRole = 'Admin' | 'Staff';
+export type UserRole = 'ADMIN' | 'STAFF';
 
 /** Item de usuário na listagem (resposta da API GET /api/users). */
 export interface UserListItem {
@@ -22,8 +22,8 @@ export interface RegisterUserApiRequest {
   name: string;
   email: string;
   password: string;
-  isActive: boolean;
-  role: number; // 0 = Admin, 1 = Staff
+  confirmPassword: string;
+  role: string;
 }
 
 /** Resposta do cadastro (POST /api/users). */
@@ -36,12 +36,11 @@ export interface RegisterUserApiResponse {
   createdAt: string;
 }
 
-/** Dados do formulário de cadastro de usuário (admin). */
+/** Dados do formulário de cadastro de usuário (ADMIN). */
 export interface UserFormData {
   name: string;
   email: string;
   password: string;
   confirmPassword: string;
   role: UserRole;
-  isActive: boolean;
 }

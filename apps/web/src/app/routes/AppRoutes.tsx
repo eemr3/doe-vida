@@ -1,20 +1,20 @@
-import { Navigate, useLocation, useNavigate, Routes, Route } from 'react-router-dom';
-import { useCallback, useEffect, useState } from 'react';
-import { MainLayout } from '@/shared/ui/templates/MainLayout';
-import { LandingPage } from '@/features/landing/pages';
-import { LoginPage } from '@/features/auth/pages';
-import {
-  RegisterDonorPage,
-  DonorsListPage,
-  DonorDetailsPage,
-  RegisterDonationPage,
-} from '@/features/donors/pages';
-import { DashboardPage } from '@/features/dashboard/pages';
-import { UsersListPage, RegisterUserPage } from '@/features/users/pages';
 import { useAuth } from '@/app/providers/AuthProvider';
 import { useToast } from '@/app/providers/ToastProvider';
-import { setOnUnauthorized } from '@/shared/api/client';
+import { LoginPage } from '@/features/auth/pages';
+import { DashboardPage } from '@/features/dashboard/pages';
+import {
+  DonorDetailsPage,
+  DonorsListPage,
+  RegisterDonationPage,
+  RegisterDonorPage,
+} from '@/features/donors/pages';
 import type { DonorFormData } from '@/features/donors/types';
+import { LandingPage } from '@/features/landing/pages';
+import { RegisterUserPage, TeamManagement } from '@/features/team-management/pages';
+import { setOnUnauthorized } from '@/shared/api/client';
+import { MainLayout } from '@/shared/ui/templates/MainLayout';
+import { useCallback, useEffect, useState } from 'react';
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -27,11 +27,13 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
 
 function RequireAdmin({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, user } = useAuth();
+  console.log('user', user);
+  console.log('isAuthenticated', isAuthenticated);
   const location = useLocation();
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
-  if (user?.role !== 'Admin') {
+  if (user?.role !== 'ADMIN') {
     return <Navigate to="/dashboard" replace />;
   }
   return <>{children}</>;
@@ -42,6 +44,7 @@ function pathToNavPage(path: string): string {
   if (path === '/dashboard') return 'dashboard';
   if (path === '/users' || path.startsWith('/users/')) return 'users';
   if (path.startsWith('/donors/') && path !== '/donors') return 'donor-details';
+  if (path === '/team-management') return 'team-management';
   const map: Record<string, string> = {
     '/register': 'register',
     '/login': 'login',
@@ -88,6 +91,7 @@ export function AppRoutes() {
         'donors-list': '/donors',
         dashboard: '/dashboard',
         users: '/users',
+        'team-management': '/team-management',
       };
       const path = pathMap[page] ?? '/';
       navigate(path);
@@ -169,18 +173,18 @@ export function AppRoutes() {
           }
         />
         <Route
-          path="/users"
+          path="/usres/new"
           element={
             <RequireAdmin>
-              <UsersListPage />
+              <RegisterUserPage />
             </RequireAdmin>
           }
         />
         <Route
-          path="/users/new"
+          path="/team-management"
           element={
             <RequireAdmin>
-              <RegisterUserPage />
+              <TeamManagement />
             </RequireAdmin>
           }
         />

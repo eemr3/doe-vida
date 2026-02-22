@@ -15,7 +15,7 @@ export class GetAllDonorUseCase {
 
   async execute(query: DonorQuery): Promise<DonorResponseDto> {
     const donors = await this.donorRepository.findAll(query);
-    console.log('query', query);
+
     let result = donors.items.map((donor) => {
       const donorEntity = new DonorEntity(
         donor.id,

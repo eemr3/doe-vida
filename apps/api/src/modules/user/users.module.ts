@@ -8,6 +8,8 @@ import { USER_REPOSITORY } from './domain/repositories/user.repository';
 import { CreateUserUseCase } from './application/use-cases/create-user.use-case';
 import { FindByEmailUseCase } from './application/use-cases/find-by-email.use-case';
 import { RoleOrmEntity } from './infrastructure/typeorm/role.orm-entity';
+import { GetUsersUseCase } from './application/use-cases/get-users.use-case';
+import { SetUserActiveUseCase } from './application/use-cases/set-user-active.use-case';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserOrmEntity, RoleOrmEntity])],
@@ -15,6 +17,8 @@ import { RoleOrmEntity } from './infrastructure/typeorm/role.orm-entity';
   providers: [
     CreateUserUseCase,
     FindByEmailUseCase,
+    GetUsersUseCase,
+    SetUserActiveUseCase,
     {
       provide: USER_REPOSITORY,
       useClass: TypeOrmUserRepository,

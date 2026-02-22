@@ -8,21 +8,18 @@ import type {
   UserRole,
 } from '../types';
 
-const ROLE_TO_API: Record<UserRole, number> = {
-  Admin: 0,
-  Staff: 1,
+const ROLE_TO_API: Record<UserRole, string> = {
+  ADMIN: 'ADMIN',
+  STAFF: 'STAFF',
 };
 
-const API_TO_ROLE: Record<number, UserRole> = {
-  0: 'Admin',
-  1: 'Staff',
+const API_TO_ROLE: Record<string, UserRole> = {
+  ADMIN: 'ADMIN',
+  STAFF: 'STAFF',
 };
 
-function mapRoleFromApi(value: number | string): UserRole {
-  if (typeof value === 'string') {
-    return value === 'Admin' ? 'Admin' : 'Staff';
-  }
-  return API_TO_ROLE[value] ?? 'Staff';
+function mapRoleFromApi(value: string): UserRole {
+  return API_TO_ROLE[value] ?? 'STAFF';
 }
 
 export interface ListUsersParams {
@@ -40,7 +37,7 @@ export const usersService = {
     items: UserListItem[];
     totalCount: number;
   }> {
-    const { data } = await apiClient.get<GetUsersApiResponse>('/api/users', {
+    const { data } = await apiClient.get<GetUsersApiResponse>('/users', {
       params: {
         page: params.page ?? 1,
         pageSize: params.pageSize ?? 10,
@@ -52,7 +49,7 @@ export const usersService = {
       },
     });
 
-    const items = (data.items ?? []).map((item: Record<string, unknown>) => ({
+    const items = (data.items ?? []).map((item: UserListItem) => ({
       id: item.id as string,
       name: item.name as string,
       email: item.email as string,
@@ -72,14 +69,15 @@ export const usersService = {
       name: formData.name.trim(),
       email: formData.email.trim().toLowerCase(),
       password: formData.password,
-      isActive: formData.isActive,
+      confirmPassword: formData.confirmPassword,
       role: ROLE_TO_API[formData.role],
     };
-    const { data } = await apiClient.post<RegisterUserApiResponse>('/api/users', body);
+
+    const { data } = await apiClient.post<RegisterUserApiResponse>('/users', body);
     return { id: data.id };
   },
 
   async setActive(userId: string, isActive: boolean): Promise<void> {
-    await apiClient.put(`/api/users/${userId}/active`, { isActive });
+    await apiClient.patch(`/users/${userId}/active`, { isActive });
   },
 };
