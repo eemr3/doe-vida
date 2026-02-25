@@ -1,6 +1,0 @@
-@DoeVida.Api_HostAddress = http://localhost:5192
-
-GET {{DoeVida.Api_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
