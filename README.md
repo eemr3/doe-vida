@@ -1,6 +1,6 @@
-# DoeSangue
+# DoeVida
 
-Monorepo do projeto DoeSangue (DoeVida) — sistema de doação de sangue.
+Monorepo do projeto DoeVida — sistema de doação de sangue.
 
 ## Estrutura do monorepo
 
@@ -184,12 +184,6 @@ Controle de acesso baseado em role:
 - ADMIN
 
 - STAFF
-
-## Documentação
-
-- [Identity e design minimal](docs/IDENTITY-MINIMAL-DESIGN.md)
-- [Notas de implementação](docs/IMPLEMENTATION_NOTES.md)
-- [Arquitetura do frontend](apps/web/docs/ARCHITECTURE.md)
 
 ## Licença
 
