@@ -47,3 +47,12 @@ Objetivo desta versão:
 - Melhor integração com aplicações modernas em TypeScript
 
 ---
+
+## Como contribuir
+
+1. Faça um fork ou clone do repositório.
+2. Crie uma branch de recurso ou correção (`git checkout -b meu-recurso`).
+3. Faça suas alterações, garantindo que o código compile e os testes passem.
+4. Abra um pull request na branch apropriada (`dotnet` ou `nestjs`) com uma descrição clara das mudanças.
+5. Aguarde revisão e aprovação antes de mesclar.
+
