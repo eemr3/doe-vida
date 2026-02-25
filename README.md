@@ -1,9 +1,15 @@
-# DoeSangue
+# Doe Vida
+Sistema para gestão e incentivo à doação de sangue, conectando doadores.
 
-Projeto de sistema de doação de sangue com duas variantes de backend e um frontend unificado.
+Este repositório foi estruturado como monorepo e possui duas implementações diferentes de backend com o mesmo frontend, permitindo comparação de arquitetura e stack.
 
-## Visão geral
+- Backend versão .NET
 
+- Backend versão NestJS
+
+- Frontend único em React + Vite
+
+## Branches do Projeto
 O repositório abriga duas versões da API:
 
 - **`dotnet` branch** – backend construído em ASP.NET Core (.NET 8+).
@@ -11,11 +17,33 @@ O repositório abriga duas versões da API:
 
 O frontend em ambas as branches é feito com **React + Vite**.
 
-## Branches
+## Versão .NET
+Backend desenvolvido com ASP.NET Core + Entity Framework.
+- [dotnet](https://github.com/eemr3/doe-vida/tree/backend-dotnet) – versão .NET da API.
 
-- [dotnet](https://github.com/your-repo-url/tree/dotnet) – versão .NET da API.
-- [nestjs](https://github.com/your-repo-url/tree/nestjs) – versão NestJS da API.
+Objetivo desta versão:
 
-> Substitua as URLs acima pela localização real do seu repositório.
+- Arquitetura robusta corporativa
+
+- Uso de Identity
+
+- Estrutura baseada em camadas
+
+- Integração com PostgreSQL
+
+## Versão NestJS
+Backend desenvolvido com NestJS (Node.js).
+
+- [nestjs](https://github.com/eemr3/doe-vida/tree/backend-nestjs) – versão NestJS da API.
+
+Objetivo desta versão:
+
+- Arquitetura modular
+
+- Alto desacoplamento
+
+- Uso de padrões do ecossistema Node
+
+- Melhor integração com aplicações modernas em TypeScript
 
 ---
