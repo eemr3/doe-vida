@@ -3,6 +3,7 @@ import { GenderType } from '../../domain/enum/Gender-type.enum';
 import { EligibilityResult } from '../../domain/value-objects/eligibility-result.vo';
 
 interface DonationHistory {
+  id?: string;
   dateDonation: Date;
   location: string;
 }

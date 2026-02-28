@@ -6,6 +6,7 @@ import {
   IDonorRepository,
 } from '../../domain/repositories/donor.repository';
 import { DonorResponseDto } from '../dtos/donor-response';
+import { DonationEntity } from '../../domain/entities/donation.entiry';
 
 export class GetAllDonorUseCase {
   constructor(
@@ -17,6 +18,16 @@ export class GetAllDonorUseCase {
     const donors = await this.donorRepository.findAll(query);
 
     let result = donors.items.map((donor) => {
+      const donations =
+        donor.donations?.map(
+          (d) =>
+            new DonationEntity(
+              d.id ?? null,
+              donor.id,
+              d.dateDonation,
+              d.location,
+            ),
+        ) ?? [];
       const donorEntity = new DonorEntity(
         donor.id,
         donor.name,
@@ -28,7 +39,7 @@ export class GetAllDonorUseCase {
         donor.bloodType,
         donor.weight,
         donor.createdAt,
-        donor.donations,
+        donations,
       );
       const age = donorEntity.getAge();
       const eligible = donorEntity.checkEligibility();

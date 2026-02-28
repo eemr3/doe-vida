@@ -1,8 +1,7 @@
 import { EntityManager } from 'typeorm';
-import { ResponseDonorsDto } from '../../infrastructure/http/dtos/response-donors.dto';
 import { DonorEntity } from '../entities/donor.entity';
-import { EligibilityResult } from '../value-objects/eligibility-result.vo';
 import { BloodType } from '../enum/boodtype.enum';
+import { DonorListItem } from '../models/donor-list-item';
 
 export const DONOR_REPOSITORY = 'DONOR_REPOSITORY';
 
@@ -13,6 +12,11 @@ export interface DonorQuery {
   bloodType?: BloodType;
   eligible?: boolean;
   search?: string;
+}
+
+export interface FindAllDonorsResult {
+  items: DonorListItem[];
+  totalCount: number;
 }
 
 export interface DonorStatsDto {
@@ -28,7 +32,7 @@ export interface IDonorRepository {
     manager?: EntityManager,
   ): Promise<DonorEntity | null>;
   findById(id: string): Promise<DonorEntity | null>;
-  findAll(query: DonorQuery): Promise<ResponseDonorsDto>;
+  findAll(query: DonorQuery): Promise<FindAllDonorsResult>;
   update(donor: DonorEntity): Promise<DonorEntity>;
   getStats(): Promise<DonorStatsDto>;
 }

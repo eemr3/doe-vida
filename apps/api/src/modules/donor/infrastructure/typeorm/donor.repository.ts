@@ -6,9 +6,9 @@ import { DonorEntity } from '../../domain/entities/donor.entity';
 import {
   DonorQuery,
   DonorStatsDto,
+  FindAllDonorsResult,
   IDonorRepository,
 } from '../../domain/repositories/donor.repository';
-import { ResponseDonorsDto } from '../http/dtos/response-donors.dto';
 import { DonorOrmEntity } from './donor.orm-entity';
 
 @Injectable()
@@ -85,7 +85,7 @@ export class TypeOrmDonorRepository implements IDonorRepository {
       : null;
   }
 
-  async findAll(query: DonorQuery): Promise<ResponseDonorsDto> {
+  async findAll(query: DonorQuery): Promise<FindAllDonorsResult> {
     const page = query.page ?? 1;
     const limit = query.pageSize ?? 10;
 
@@ -179,42 +179,27 @@ export class TypeOrmDonorRepository implements IDonorRepository {
 
     const [entities, total] = await db.getManyAndCount();
 
-    const result = entities.map(
-      (entity) =>
-        new DonorEntity(
-          entity.id,
-          entity.name,
-          entity.email,
-          entity.phone,
-          entity.dateOfBirth,
-          entity.gender,
-          entity.city,
-          entity.bloodType,
-          entity.weight,
-          entity.createdAt,
-          entity.donations,
-        ),
-    );
+    const result = entities.map((entity) => ({
+      id: entity.id,
+      name: entity.name,
+      email: entity.email,
+      phone: entity.phone,
+      dateOfBirth: entity.dateOfBirth,
+      gender: entity.gender,
+      city: entity.city,
+      bloodType: entity.bloodType,
+      weight: entity.weight,
+      createdAt: entity.createdAt,
+      donations:
+        entity.donations?.map((donation) => ({
+          id: donation.id,
+          donorId: donation.donorId ?? entity.id,
+          dateDonation: donation.dateDonation!,
+          location: donation.location ?? '',
+        })) ?? [],
+    }));
     return {
-      items: result.map((entity) => ({
-        id: entity.id,
-        name: entity.name,
-        email: entity.email,
-        phone: entity.phone,
-        dateOfBirth: entity.dateOfBirth,
-        gender: entity.gender,
-        city: entity.city,
-        bloodType: entity.bloodType,
-        weight: entity.weight,
-        createdAt: entity.createdAt,
-        donations:
-          entity.donations?.map((donation) => ({
-            id: donation.id,
-            donorId: donation.donorId,
-            dateDonation: donation.dateDonation,
-            location: donation.location,
-          })) ?? [],
-      })),
+      items: result,
       totalCount: total,
     };
   }

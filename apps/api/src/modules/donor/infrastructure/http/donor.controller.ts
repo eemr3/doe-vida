@@ -16,9 +16,24 @@ import { GetDonorByIdUseCase } from '../../application/use-cases/get-donor-by-id
 import { RegisterDonorUseCase } from '../../application/use-cases/register-donor.use-case';
 import { DonorQueryDto } from './dtos/donor-query.dto';
 import { RegisterDonorRequestDto } from './dtos/request.dto';
+import {
+  ResponseDonorsDto,
+  DonorByIdDto,
+  DonorStatsDto,
+} from './dtos/response-donors.dto';
 import { GetDonorStatsUseCase } from '../../application/use-cases/get-donor-stats.use-case ';
+import {
+  ApiBearerAuth,
+  ApiTags,
+  ApiOkResponse,
+  ApiCreatedResponse,
+} from '@nestjs/swagger';
 
-@Controller('donors')
+@ApiTags('Donors')
+@Controller({
+  path: 'donors',
+  version: '1',
+})
 export class DonorController {
   constructor(
     private readonly registerDonorUseCase: RegisterDonorUseCase,
@@ -28,15 +43,24 @@ export class DonorController {
   ) {}
 
   @Post()
+  @ApiCreatedResponse({
+    type: ResponseDonorsDto,
+    description: 'Donor registered successfully (returned inside list)',
+  })
   async registerDonor(
     @Body() registerDonorRequestDto: RegisterDonorRequestDto,
   ) {
     return this.registerDonorUseCase.execute(registerDonorRequestDto);
   }
 
+  @ApiBearerAuth('JWT')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(Role.STAFF, Role.ADMIN)
   @Get()
+  @ApiOkResponse({
+    type: ResponseDonorsDto,
+    description: 'List of donors with pagination',
+  })
   async getAllDonors(@Query() query: DonorQueryDto) {
     return this.getAllDonorsUseCase.execute({
       page: query.page,
@@ -48,16 +72,26 @@ export class DonorController {
     });
   }
 
+  @ApiBearerAuth('JWT')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(Role.STAFF, Role.ADMIN)
   @Get('stats')
+  @ApiOkResponse({
+    type: DonorStatsDto,
+    description: 'Snapshot of donor statistics',
+  })
   async getStats() {
     return this.getDonorStatsUseCase.execute();
   }
 
+  @ApiBearerAuth('JWT')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(Role.STAFF, Role.ADMIN)
   @Get(':id')
+  @ApiOkResponse({
+    type: DonorByIdDto,
+    description: 'Information for a single donor',
+  })
   async getDonorById(@Param('id') id: string) {
     return this.getDonorByIdUseCase.execute(id);
   }
