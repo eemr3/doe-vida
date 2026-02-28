@@ -1,8 +1,10 @@
-# DoeVida
+# 🩸 DoeVida
 
-Monorepo do projeto DoeVida — sistema de doação de sangue.
+> Sistema de doação de sangue — monorepo com backend NestJS e frontend React.
 
-## Estrutura do monorepo
+---
+
+## 📁 Estrutura do monorepo
 
 ```
 .
@@ -13,123 +15,128 @@ Monorepo do projeto DoeVida — sistema de doação de sangue.
 ├── docker-compose.yml
 ├── package.json    # Raiz — npm workspaces
 └── README.md
-
 ```
 
-🧱 Arquitetura da API
+---
 
-A API segue arquitetura modular:
+## 🧱 Arquitetura da API
+
+A API segue arquitetura modular baseada em domínio:
 
 ```
 src/
 └── modules/
     └── example/
-        ├── domain/               # Entidades, repositórios (interfaces), exceções
-        ├── application/          # Casos de uso (UseCases)
-        └── infrastructure/       # TypeORM, Controllers, Guards, Strategies
+        ├── domain/           # Entidades, repositórios (interfaces), exceções
+        ├── application/      # Casos de uso (UseCases)
+        └── infrastructure/   # TypeORM, Controllers, Guards, Strategies
 ```
+
+---
+
+## 🛠️ Tecnologias
 
 | App     | Tecnologias                                                            |
 | ------- | ---------------------------------------------------------------------- |
 | **api** | NestJS, TypeORM, PostgreSQL, Redis, JWT, Passport, Bcrypt              |
 | **web** | React 18, TypeScript, Vite, React Router, TanStack Query, Tailwind CSS |
 
-📦 Pré-requisitos
+---
 
-Node.js >= 18
+## 📦 Pré-requisitos
 
-Docker
+- Node.js >= 18
+- Docker
+- Docker Compose
 
-Docker Compose
+---
 
-## Instalação
+## 🚀 Instalação
 
 ```bash
-# Clone o repositório (se ainda não clonou)
+# Clone o repositório
 git clone <url-do-repositorio>
 cd new-doesangue
 
-# Instala dependências do frontend (na raiz)
+# Instala as dependências
 npm install
 ```
 
-## Como rodar
+---
 
-🐳 Banco de Dados e Redis (Docker)
+## ▶️ Como rodar
 
-Na **raiz do repositório**, suba PostgreSQL e Redis em containers:
+### 🐳 1. Banco de Dados e Redis (Docker)
+
+Na **raiz do repositório**, suba os serviços em containers:
 
 ```bash
 docker compose up -d
 ```
 
-**Portas não padrão** — Para evitar conflito com Postgres ou Redis já rodando na sua máquina (que costumam usar 5432 e 6379), este projeto usa:
+> **Portas não padrão** — para evitar conflito com serviços locais já em execução:
 
 | Serviço    | Porta no host | Porta padrão |
 | ---------- | ------------- | ------------ |
 | PostgreSQL | **5433**      | 5432         |
 | Redis      | **6380**      | 6379         |
 
-Isso evita conflito com serviços locais já rodando.
+---
 
-🔐 Credenciais padrão (desenvolvimento)
+### 🔐 2. Variáveis de ambiente
 
-PostgreSQL:
-
-```yml
-Host: localhost
-Port: 5433
-User: toch
-Password: supersecretpassword
-Database: doevida-db
-```
-
-Redis:
-
-```yml
-Host: localhost
-Port: 6380
-Password: redis-dev-secret
-```
-
-Você pode alterar copiando:
+Copie o arquivo de exemplo e ajuste as variáveis conforme necessário:
 
 ```bash
 cp .env.example .env
 ```
 
-🗄️ Backend (API)
+**PostgreSQL (desenvolvimento):**
 
-Antes de subir a API, certifique-se que o banco está rodando:
+| Variável | Valor padrão          |
+| -------- | --------------------- |
+| Host     | localhost             |
+| Port     | 5433                  |
+| User     | toch                  |
+| Password | supersecretpassword   |
+| Database | doevida-db            |
+
+**Redis (desenvolvimento):**
+
+| Variável | Valor padrão      |
+| -------- | ----------------- |
+| Host     | localhost         |
+| Port     | 6380              |
+| Password | redis-dev-secret  |
+
+---
+
+### 🗄️ 3. Migrations e Seed
+
+Com o banco rodando, execute dentro de `apps/api`:
 
 ```bash
 cd apps/api
-npm run migration:run
-```
 
-```bash
+# Roda as migrations
+npm run migration:run
+
+# Popula o banco com dados iniciais
 npm run seed
 ```
 
-Isso criará:
+Isso criará os seguintes usuários padrão:
 
-👤 Admin
+| Papel     | E-mail             | Senha       |
+| --------- | ------------------ | ----------- |
+| 👤 Admin  | admin@admin.com    | Admin@123   |
+| 👤 Staff  | staff@staff.com    | Staff@123   |
 
-- Email: admin@admin.com
+---
 
-- Senha: Admin@123
+### 🖥️ 4. Rodando os serviços
 
-👤 Staff
-
-- Email: staff@staff.com
-
-- Senha: Staff@123
-
-## Rodar API em desenvolvimento
-
-### Frontend (web)
-
-Na **raiz do repositório**:
+**Frontend (web)** — na raiz do repositório:
 
 ```bash
 npm run dev        # Servidor de desenvolvimento (Vite)
@@ -137,54 +144,77 @@ npm run build      # Build de produção
 npm run preview    # Preview do build
 ```
 
-Ou dentro de `apps/web`:
+Ou diretamente em `apps/web`:
 
 ```bash
 cd apps/web && npm run dev
 ```
 
-### Backend (API)
-
-**Antes de subir a API**, certifique-se de que o PostgreSQL está rodando (`docker compose up -d` na raiz). Caso contrário a API falhará ao conectar (connection refused na porta 5433).
-
-Na **raiz do repositório**:
+**Backend (API)** — na raiz do repositório:
 
 ```bash
 npm run api:dev
 ```
 
-Ou **dentro de apps/api**:
+Ou diretamente em `apps/api`:
 
 ```bash
-npm run start:dev
+cd apps/api && npm run start:dev
 ```
+
+> ⚠️ Certifique-se de que o PostgreSQL está rodando (`docker compose up -d`) antes de subir a API. Caso contrário, a conexão será recusada na porta 5433.
 
 A API estará disponível em:
 
-```arduino
+```
 http://localhost:3001
 ```
 
-🔐 Autenticação
+---
 
-A API utiliza:
+## 📄 Documentação da API (Swagger)
 
-- JWT
+A documentação interativa da API é gerada automaticamente via **Swagger/OpenAPI** e fica disponível após subir o backend:
 
-- Passport
+```
+http://localhost:3001/api/docs
+```
 
-- Decorator @CurrentUser()
+### O que você encontra lá:
 
-- Decorator @Roles()
+- 📋 **Listagem de todos os endpoints** organizados por módulo
+- 🔐 **Autenticação via JWT** — use o botão **Authorize** para inserir seu Bearer token e testar rotas protegidas
+- 📥 **Schemas de request/response** com exemplos e validações
+- ▶️ **Execução de requisições** diretamente pelo navegador, sem precisar de Postman ou Insomnia
 
-- RolesGuard
+### Como autenticar no Swagger:
 
-Controle de acesso baseado em role:
+1. Acesse `http://localhost:3001/api/docs`
+2. Faça login em `POST /auth/login` com um dos usuários padrão
+3. Copie o `accessToken` retornado
+4. Clique no botão **🔒 Authorize** (canto superior direito)
+5. Insira o token no formato: `Bearer <seu-token>`
+6. Confirme e explore os endpoints protegidos
 
-- ADMIN
+---
 
-- STAFF
+## 🔐 Autenticação e Controle de Acesso
 
-## Licença
+A API utiliza **JWT + Passport** com controle de acesso baseado em roles.
+
+| Recurso             | Descrição                                           |
+| ------------------- | --------------------------------------------------- |
+| `@CurrentUser()`    | Decorator para acessar o usuário autenticado        |
+| `@Roles()`          | Decorator para restringir acesso por papel          |
+| `RolesGuard`        | Guard que valida as roles na requisição             |
+
+**Roles disponíveis:**
+
+- `ADMIN` — acesso total ao sistema
+- `STAFF` — acesso operacional
+
+---
+
+## 📜 Licença
 
 Privado / uso interno.
