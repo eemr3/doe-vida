@@ -20,6 +20,9 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@nestjs/swagger": "^11.2.6"
+    "@indiebase/nest-stoplight-elements": "^0.0.1-alpha.14",
+    "@nestjs/swagger": "^11.2.6",
+    "@scalar/nestjs-api-reference": "^1.0.29",
+    "@stoplight/elements": "^9.0.16"
   }
 }

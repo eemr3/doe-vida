@@ -4,6 +4,7 @@ import { LoginRequestDto } from './dtos/request.dto';
 import { LoginResponseDto } from './dtos/response.dto';
 import { ApiTags, ApiCreatedResponse } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller({
   path: 'auth',
   version: '1',
@@ -11,7 +12,6 @@ import { ApiTags, ApiCreatedResponse } from '@nestjs/swagger';
 export class AuthController {
   constructor(private readonly loginUseCase: LoginUseCase) {}
 
-  @ApiTags('Auth')
   @Post('login')
   @ApiCreatedResponse({
     type: LoginResponseDto,

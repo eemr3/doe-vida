@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from './modules/auth/auth.module';
-import { UserModule } from './modules/user/users.module';
-import { DatabaseModule } from './infrastructure/database/postgres/database.module';
 import { ConfigModule } from '@nestjs/config';
-import { DonorModule } from './modules/donor/donor.module';
 import envConfig from './config/env.config';
 import { validateEnv } from './config/env.validation';
+import { DatabaseModule } from './infrastructure/database/postgres/database.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { DonorModule } from './modules/donor/donor.module';
+import { UserModule } from './modules/user/users.module';
 
 @Module({
   imports: [
