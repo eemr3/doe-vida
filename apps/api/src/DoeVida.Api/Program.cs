@@ -10,6 +10,7 @@ using DoeVida.Infrastructure.Persistence.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +19,22 @@ builder.Services.AddControllers();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new()
+    {
+        Title = "API Doe Vida",           // ← Título
+        Description = "API para gerenciamento de doações de sangue e cadastro de doadores.",  // ← Descrição
+        Version = "1.0.0",
+        Contact = new()
+        {
+            Name = "Emerson Moreira",
+            Email = "emerson@empresa.com",
+            Url = new("https://linkedin.com/emerson-moreira")
+        }
+    });
+});
+
 
 // Cors
 builder.Services.AddCors(options =>
@@ -117,6 +133,10 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.MapScalarApiReference((options) =>
+    {
+        options.WithOpenApiRoutePattern("/swagger/{documentName}/swagger.json");
+    });
 }
 
 app.UseHttpsRedirection();

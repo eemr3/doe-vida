@@ -1,114 +1,168 @@
-# DoeVida
+# 🩸 DoeVida
 
-Monorepo do projeto DoeVida — sistema de doação de sangue.
+Sistema de doação de sangue desenvolvido como monorepo. Inclui backend em .NET (API) e frontend em React/Vite.
 
-## Estrutura do monorepo
+> Observação: este repositório é privado / uso interno.
+
+---
+
+## 📑 Sumário
+
+1. [Visão geral](#visão-geral)
+2. [Pré‑requisitos](#pré-requisitos)
+3. [Instalação](#instalação)
+4. [Banco de dados & Redis](#banco-de-dados--redis)
+5. [Rodando o projeto](#rodando-o-projeto)
+   - [API (backend)](#api-backend)
+   - [Web (frontend)](#web-frontend)
+6. [Stack](#stack)
+7. [Documentação adicional](#documentação-adicional)
+8. [Licença](#licença)
+
+---
+
+## 🔍 Visão geral
+
+Monorepo que contém:
 
 ```
 .
 ├── apps/
 │   ├── api/     # API .NET (backend)
 │   └── web/     # Frontend React + Vite
-├── docs/            # Documentação
-├── docker-compose.yml  # PostgreSQL + Redis (dev, portas 5433 e 6380)
-├── package.json    # Raiz — npm workspaces
-└── README.md
+├── docs/       # Documentação do projeto
+├── docker-compose.yml  # PostgreSQL + Redis (dev)
+└── package.json    # Raiz – npm workspaces
 ```
 
-## Pré-requisitos
+---
 
-- **Node.js** >= 18 (para o frontend)
-- **.NET SDK** (para a API) — [download](https://dotnet.microsoft.com/download)
-- **Docker** e **Docker Compose** (para subir o PostgreSQL em desenvolvimento)
+## 🛠 Pré‑requisitos
 
-## Instalação
+- **Node.js** ≥18 (frontend)
+- **.NET SDK** (backend) — https://dotnet.microsoft.com/download
+- **Docker & Docker Compose** (para PostgreSQL/Redis em dev)
+
+> Use `.env.example` como base se precisar customizar credenciais.
+
+---
+
+## ⚙️ Instalação
 
 ```bash
-# Clone o repositório (se ainda não clonou)
+# clone e entre na pasta
 git clone <url-do-repositorio>
-cd new-doesangue
+cd doe-vida
 
-# Instala dependências do frontend (na raiz)
+# instalar dependências do frontend
 npm install
 ```
 
-## Como rodar
+---
 
-### Banco de dados e Redis (Docker Compose)
-
-Na **raiz do repositório**, suba PostgreSQL e Redis em containers:
+## 🐘 Banco de dados & Redis (Dev)
 
 ```bash
+# na raiz do repo
 docker compose up -d
 ```
 
-**Portas não padrão** — Para evitar conflito com Postgres ou Redis já rodando na sua máquina (que costumam usar 5432 e 6379), este projeto usa:
+> **Portas não‑padrão**
+> | Serviço | Host | Padrão |
+> |------------|------|--------|
+> | PostgreSQL | 5433 | 5432 |
+> | Redis | 6380 | 6379 |
 
-| Serviço    | Porta no host | Porta padrão |
-| ---------- | ------------- | ------------ |
-| PostgreSQL | **5433**      | 5432         |
-| Redis      | **6380**      | 6379         |
+🔑 **Redis** exige senha: `redis-dev-secret`.
+📌 Passe `REDIS_PASSWORD` no `.env` para trocar.
 
-Assim você pode ter outro Postgres/Redis na porta padrão sem conflito. O `appsettings.json` da API já está configurado para `Port=5433`. **Redis** exige senha: padrão `redis-dev-secret` (sobrescreva com `REDIS_PASSWORD` no `.env`). Ao conectar o app ao Redis, use `localhost:6380` e essa senha.
+**Credenciais Postgres** (configuradas em `appsettings.json`):
 
-Credenciais do Postgres (batem com o `appsettings.json`): usuário `toch`, senha `supersecretpassword`, database `doevida-db`. Para mudar, copie `.env.example` para `.env` e ajuste.
-
-Para aplicar as migrations da API (primeira vez ou após mudanças), na raiz do repo:
-
-```bash
-cd apps/api && dotnet ef database update --project src/DoeVida.Infrastructure/DoeVida.Infrastructure.csproj --startup-project src/DoeVida.Api/DoeVida.Api.csproj
+```
+user: toch
+pass: supersecretpassword
+db: doevida-db
 ```
 
-### Frontend (web)
-
-Na **raiz do repositório**:
+### Migrations (API)
 
 ```bash
-npm run dev        # Servidor de desenvolvimento (Vite)
-npm run build      # Build de produção
-npm run preview    # Preview do build
+cd apps/api
+dotnet ef database update \
+	--project src/DoeVida.Infrastructure/DoeVida.Infrastructure.csproj \
+	--startup-project src/DoeVida.Api/DoeVida.Api.csproj
 ```
 
-Ou dentro de `apps/web`:
+---
+
+## ▶️ Rodando o projeto
+
+### 🧩 API (backend)
+
+> Antes: garanta que o PostgreSQL esteja escutando em `localhost:5433`.
 
 ```bash
-cd apps/web && npm run dev
-```
-
-### Backend (API)
-
-**Antes de subir a API**, certifique-se de que o PostgreSQL está rodando (`docker compose up -d` na raiz). Caso contrário a API falhará ao conectar (connection refused na porta 5433).
-
-Na **raiz do repositório**:
-
-```bash
+# opção 1 (npm script na raiz)
 npm run api:dev
-```
 
-Ou dentro de `apps/api`:
-
-```bash
+# opção 2 (diretamente na pasta)
 cd apps/api
 dotnet run --project src/DoeVida.Api/DoeVida.Api.csproj
 ```
 
-Ou abra a solution no Visual Studio / Rider e execute o projeto **DoeVida.Api**.
+Ou abra a solução `DoeVida.sln` no Visual Studio/Rider e execute o projeto **DoeVida.Api**.
 
-A API usa arquivos de configuração em `src/DoeVida.Api/` (`appsettings.json`, `appsettings.Development.json`). Ajuste connection strings e demais opções conforme o ambiente.
+### 🌐 Web (frontend)
 
-## Stack
+```bash
+# na raiz
+npm run dev       # dev server (Vite)
+npm run build     # build prod
+npm run preview   # preview build
+
+# ou internamente
+cd apps/web && npm run dev
+```
+
+---
+
+## 🧱 Stack
 
 | App     | Tecnologias                                                                 |
 | ------- | --------------------------------------------------------------------------- |
-| **api** | .NET, ASP.NET Core, Entity Framework Core, Identity                         |
+| **api** | .NET, ASP.NET Core, EF Core, Identity                                       |
 | **web** | React 18, TypeScript, Vite, React Router, TanStack Query, Tailwind CSS, Zod |
 
-## Documentação
+## 📘 Documentação da API
+
+- **Swagger / OpenAPI**: ao rodar a API localmente, a documentação interativa normalmente fica disponível em `/swagger`. Exemplo: `http://localhost:5000/swagger` (substitua a porta conforme configurada no projeto ou conforme os logs do `dotnet run`).
+
+- **Coleção HTTP**: há um arquivo de coleções/requests em `apps/api/src/DoeVida.Api/DoeVida.Api.http` que pode ser usado com a extensão REST Client do VS Code ou importado no Postman.
+
+- **Como usar (exemplo rápido)**:
+
+```bash
+cd apps/api
+dotnet run --project src/DoeVida.Api/DoeVida.Api.csproj
+# abra o Swagger no navegador: http://localhost:5192/swagger
+# ou
+# abra o Scalar no navegador: http://localhost:5192/scalar/v1
+```
+
+- **Observações**: verifique `src/DoeVida.Api/Properties/launchSettings.json` se precisar confirmar portas HTTPS/HTTP usadas em ambiente de desenvolvimento.
+
+---
+
+## 📚 Documentação adicional
 
 - [Identity e design minimal](docs/IDENTITY-MINIMAL-DESIGN.md)
 - [Notas de implementação](docs/IMPLEMENTATION_NOTES.md)
 - [Arquitetura do frontend](apps/web/docs/ARCHITECTURE.md)
 
-## Licença
+- Documentação da API: veja a seção abaixo para detalhes.
+
+---
+
+## 📝 Licença
 
 Privado / uso interno.
