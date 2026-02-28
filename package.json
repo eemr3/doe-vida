@@ -6,15 +6,20 @@
     "apps/*"
   ],
   "scripts": {
-    "dev": "npm run dev -w doevida",
-    "build": "npm run build -w doevida",
-    "preview": "npm run preview -w doevida",
-    "web:dev": "npm run dev -w doevida",
-    "web:build": "npm run build -w doevida",
-    "web:preview": "npm run preview -w doevida",
-    "api:dev": "npm run start:dev -w api"
+    "dev": "npm run web:dev",
+    "build": "npm run web:build",
+    "preview": "npm run web:preview",
+    "web:dev": "npm run dev -w apps/web",
+    "web:build": "npm run build -w apps/web",
+    "web:preview": "npm run preview -w apps/web",
+    "api:dev": "npm run start:dev -w apps/api",
+    "api:build": "npm run build -w apps/api",
+    "api:start": "npm run start -w apps/api"
   },
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "@nestjs/swagger": "^11.2.6"
   }
 }
