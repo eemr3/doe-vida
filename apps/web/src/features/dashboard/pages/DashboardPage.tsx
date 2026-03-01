@@ -244,7 +244,7 @@ export function DashboardPage() {
                 Distribuição de Tipos Sanguíneos
               </h3>
               {bloodTypeData.length === 0 ? (
-                <div className="h-[300px] flex items-center justify-center text-muted-foreground text-sm">
+                <div className="h-75 flex items-center justify-center text-muted-foreground text-sm">
                   Sem dados de doadores
                 </div>
               ) : (
@@ -300,7 +300,7 @@ export function DashboardPage() {
             <Card padding="lg">
               <h3 className="font-semibold text-lg mb-6">Top 5 Cidades</h3>
               {cityData.length === 0 ? (
-                <div className="h-[300px] flex items-center justify-center text-muted-foreground text-sm">
+                <div className="h-75 flex items-center justify-center text-muted-foreground text-sm">
                   Sem dados
                 </div>
               ) : (
