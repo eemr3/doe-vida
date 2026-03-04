@@ -1,46 +1,36 @@
-# Portas não padrão para evitar conflito com Postgres/Redis já rodando na máquina (5432 e 6379).
-# Postgres: 5433 | Redis: 6380
+version: '3.9'
 
 services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: doevida-postgres
+  postgres-estudos:
+    image: postgres:16
+    container_name: ${POSTGRES_CONTAINER}
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-doevida}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-supersecretpassword}
-      POSTGRES_DB: ${POSTGRES_DB:-doevida-db}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - '5433:5432'
+      - '${POSTGRES_PORT}:5432'
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test:
-        [
-          'CMD-SHELL',
-          'pg_isready -U ${POSTGRES_USER:-doevida} -d ${POSTGRES_DB:-doevida-db}',
-        ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      - pg_lab_data:/var/lib/postgresql/data
+    networks:
+      - estudos_net
 
-  redis:
-    image: redis:7-alpine
-    container_name: doevida-redis
+  redis-estudos:
+    image: redis:7
+    container_name: ${REDIS_CONTAINER}
     restart: unless-stopped
-    environment:
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis-dev-secret}
-    command: sh -c 'redis-server --requirepass "$$REDIS_PASSWORD"'
     ports:
-      - '6380:6379'
+      - '${REDIS_PORT}:6379'
     volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ['CMD', 'sh', '-c', 'redis-cli -a "$$REDIS_PASSWORD" ping']
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      - redis_lab_data:/data
+    networks:
+      - estudos_net
 
 volumes:
-  postgres_data:
-  redis_data:
+  pg_lab_data:
+  redis_lab_data:
+
+networks:
+  estudos_net:
+    driver: bridge
