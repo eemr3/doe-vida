@@ -34,7 +34,7 @@ Objetivo desta versão:
 ## Versão NestJS
 Backend desenvolvido com NestJS (Node.js).
 
-- [nestjs](https://github.com/eemr3/doe-vida/tree/backend-nestjs) – versão NestJS da API.
+- [nestjs]([https://github.com/eemr3/doe-vida/tree/nestjs)) – versão NestJS da API.
 
 Objetivo desta versão:
 
